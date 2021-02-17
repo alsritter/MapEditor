@@ -10,10 +10,21 @@ import { GridManager } from './data/gridManager.js'
 import { getTileIndex, getTileManage } from './tileController.js'
 import { TileManager } from './data/TileManager.js'
 import { RendererTools } from './view/renderer.js'
+import { Tool } from './data/tool.js'
 
 export function drawCanvas() {
-  // 先绘制网格
+  // 取得画布
   const canvas = document.getElementById('canvas')
+  // 取得绘图工具选择
+  const toolType = document.getElementById('brushTools')
+
+  toolType.onchange = (e) => {
+    console.log(toolType.options[toolType.selectedIndex].text)
+  }
+
+  function getToolType() {
+    return Tool.returnToolType(toolType.selectedIndex)
+  }
 
   // 玩家只能决定地图有多少块画布
 
@@ -40,28 +51,69 @@ export function drawCanvas() {
   let tempGrid
   // 标识当前是否按下
   let isDown = false
+  // 记录按下时所在的格子
+  const downPosition = { x: 0, y: 0 }
+  // 记录绘图前的数据，方便撤回
+  let tempMap = gridManager.getClone()
+
+  // 监听撤回键
+  document.onkeydown = (e) => {
+    if (e.ctrlKey == true && e.key == 'z') {
+      console.log('撤回')
+      gridManager.setMap(tempMap)
+      // 然后马上刷新画面
+      DrawTools.drawGrid(
+        ctx,
+        _space,
+        canvas.width,
+        _space * _gridRowSize,
+        _gridColSize,
+        _gridRowSize
+      )
+
+      // 绘制 Map 里面已有的 Tile
+      DrawTools.drawMapTile(ctx, getTileManage(), gridManager, _space)
+    }
+  }
 
   // 鼠标点击绘制
   canvas.onmousedown = (e) => {
     let tempX = Math.floor(e.offsetY / _space)
     let tempY = Math.floor(e.offsetX / _space)
 
-    // 单笔刷点击时的绘制
-    RendererTools.singleDownBrush(
-      ctx,
-      canvas,
-      _space,
-      _gridRowSize,
-      _gridColSize,
-      gridManager,
-      getTileManage(),
-      getTileIndex().x,
-      getTileIndex().y,
-      tempX,
-      tempY
-    )
+    if (getToolType() === Tool.DRAW) {
+      // 单笔刷点击时的绘制
+      RendererTools.singleDownBrush(
+        ctx,
+        canvas,
+        _space,
+        _gridRowSize,
+        _gridColSize,
+        gridManager,
+        getTileManage(),
+        getTileIndex().x,
+        getTileIndex().y,
+        tempX,
+        tempY
+      )
+    } else if (getToolType() === Tool.FILL) {
+      RendererTools.fillDownBrush(
+        ctx,
+        canvas,
+        _space,
+        _gridRowSize,
+        _gridColSize,
+        gridManager,
+        getTileManage(),
+        getTileIndex().x,
+        getTileIndex().y
+      )
+    }
 
     isDown = true
+    downPosition.x = tempX
+    downPosition.y = tempY
+    tempMap = gridManager.getClone()
   }
 
   // 鼠标离开屏幕时
@@ -74,6 +126,7 @@ export function drawCanvas() {
     isDown = false
   }
 
+  // 鼠标移动时（核心区域）
   canvas.onmousemove = (e) => {
     let tempX = Math.floor(e.offsetY / _space)
     let tempY = Math.floor(e.offsetX / _space)
@@ -95,19 +148,43 @@ export function drawCanvas() {
 
       if (isDown) {
         // 单笔刷点击时的绘制
-        RendererTools.singleDownBrush(
-          ctx,
-          canvas,
-          _space,
-          _gridRowSize,
-          _gridColSize,
-          gridManager,
-          getTileManage(),
-          getTileIndex().x,
-          getTileIndex().y,
-          tempX,
-          tempY
-        )
+        if (getToolType() === Tool.DRAW) {
+          RendererTools.singleDownBrush(
+            ctx,
+            canvas,
+            _space,
+            _gridRowSize,
+            _gridColSize,
+            gridManager,
+            getTileManage(),
+            getTileIndex().x,
+            getTileIndex().y,
+            tempX,
+            tempY
+          )
+        } // 如果是选区笔刷
+        else if (getToolType() === Tool.DRAWAREA) {
+          // console.log(downPosition.x, downPosition.y, tempX, tempY)
+          RendererTools.areaDownBrush(
+            ctx,
+            canvas,
+            _space,
+            _gridRowSize,
+            _gridColSize,
+            gridManager,
+            getTileManage(),
+            getTileIndex().x,
+            getTileIndex().y,
+            downPosition.x,
+            downPosition.y,
+            tempX,
+            tempY
+          )
+        } else if (getToolType() === Tool.ERASE) {
+          console.log('橡皮擦')
+        } else if (getToolType() === Tool.ERASEAREA) {
+          console.log('选区橡皮擦')
+        }
       } else {
         // 单笔刷未点击时的绘制
         RendererTools.singleNotDownBrush(

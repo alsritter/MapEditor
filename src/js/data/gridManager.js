@@ -81,4 +81,20 @@ export class GridManager {
   getRowNum() {
     return this.#rows
   }
+
+  /**
+   * 深拷贝数据
+   * @returns {Object} 返回克隆的 Map
+   */
+  getClone() {
+    return JSON.parse(JSON.stringify(this.#map))
+  }
+
+  /**
+   * 修改当前的 Map
+   * @param {Object} newMap
+   */
+  setMap(newMap) {
+    this.#map = newMap
+  }
 }
