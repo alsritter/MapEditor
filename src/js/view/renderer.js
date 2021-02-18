@@ -11,7 +11,7 @@ import { DrawTools } from './drawTools.js'
 export class RendererTools {
   /**
    * 基本修改了页面数据都需要调用这个刷新
-   * 
+   *
    * @param {CanvasRenderingContext2D} ctx
    * @param {HTMLElement} canvas
    * @param {Number} space
@@ -24,7 +24,7 @@ export class RendererTools {
    * @param {Number} posX 画布上的方块的索引
    * @param {Number} posY 画布上的方块的索引
    */
-  static baseRenderer(
+  static #baseRenderer(
     ctx,
     space,
     canvas,
@@ -81,7 +81,7 @@ export class RendererTools {
     posX,
     posY
   ) {
-    RendererTools.baseRenderer(
+    RendererTools.#baseRenderer(
       ctx,
       space,
       canvas,
@@ -137,7 +137,7 @@ export class RendererTools {
     gridManager.getGrid(posX, posY).tileX = tileX
     gridManager.getGrid(posX, posY).tileY = tileY
 
-    RendererTools.baseRenderer(
+    RendererTools.#baseRenderer(
       ctx,
       space,
       canvas,
@@ -184,26 +184,38 @@ export class RendererTools {
     startPosX,
     startPosY,
     endPosX,
-    endPosy
+    endPosY
   ) {
-    // 如果起点大于终点的位置则不刷新的格子
-    if (startPosX > endPosX || startPosY > endPosy) {
-      // 绘制网格
-      DrawTools.drawGrid(ctx, space, canvas.width, space * rows, cols, rows)
-      // 绘制 Map 里面已有的 Tile
-      DrawTools.drawMapTile(ctx, tileManager, gridManager, space)
-      return
+    let maxPosX
+    let minPosX
+    let maxPosY
+    let minPosY
+
+    if (startPosX > endPosX) {
+      maxPosX = startPosX
+      minPosX = endPosX
+    } else {
+      maxPosX = endPosX
+      minPosX = startPosX
+    }
+
+    if (startPosY > endPosY) {
+      maxPosY = startPosY
+      minPosY = endPosY
+    } else {
+      maxPosY = endPosY
+      minPosY = startPosY
     }
 
     // 将当前选中的格子存储起来
-    for (let i = startPosX; i <= endPosX; i++) {
-      for (let j = startPosY; j <= endPosy; j++) {
+    for (let i = minPosX; i <= maxPosX; i++) {
+      for (let j = minPosY; j <= maxPosY; j++) {
         gridManager.getGrid(i, j).tileX = tileX
         gridManager.getGrid(i, j).tileY = tileY
       }
     }
 
-    RendererTools.baseRenderer(
+    RendererTools.#baseRenderer(
       ctx,
       space,
       canvas,
@@ -214,7 +226,7 @@ export class RendererTools {
       tileX,
       tileY,
       endPosX,
-      endPosy
+      endPosY
     )
   }
 

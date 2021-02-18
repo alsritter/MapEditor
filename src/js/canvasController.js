@@ -10,20 +10,28 @@ import { GridManager } from './data/gridManager.js'
 import { getTileIndex, getTileManage } from './tileController.js'
 import { TileManager } from './data/TileManager.js'
 import { RendererTools } from './view/renderer.js'
-import { Tool } from './data/tool.js'
+import { Tool, Layer } from './data/enumType.js'
+import { MapStack } from './data/mapStack.js'
 
 export function drawCanvas() {
   // 取得画布
   const canvas = document.getElementById('canvas')
   // 取得绘图工具选择
   const toolType = document.getElementById('brushTools')
+  // 取得图层
+  const layer = document.getElementById('layer')
+
+  let currentTool = Tool.DRAW
+  let currentLayer = Layer.BG
 
   toolType.onchange = (e) => {
     console.log(toolType.options[toolType.selectedIndex].text)
+    currentTool = Tool.returnToolType(toolType.selectedIndex)
   }
 
-  function getToolType() {
-    return Tool.returnToolType(toolType.selectedIndex)
+  layer.onchange = (e) => {
+    console.log(layer.options[layer.selectedIndex].text)
+    currentLayer = Tool.returnToolType(layer.selectedIndex)
   }
 
   // 玩家只能决定地图有多少块画布
@@ -36,6 +44,14 @@ export function drawCanvas() {
   canvas.height = _space * _gridRowSize
 
   const gridManager = new GridManager(_space, _gridColSize, _gridRowSize)
+
+  // 这里实例化图层数量个 GridManager
+  const gridManagerArray = []
+  for (let i = 0; i < layer.options.length; i++) {
+    gridManagerArray.push(new GridManager(_space, _gridColSize, _gridRowSize))
+  }
+
+  console.log(gridManagerArray);
 
   let ctx = canvas.getContext('2d')
   DrawTools.drawGrid(
@@ -54,25 +70,30 @@ export function drawCanvas() {
   // 记录按下时所在的格子
   const downPosition = { x: 0, y: 0 }
   // 记录绘图前的数据，方便撤回
-  let tempMap = gridManager.getClone()
+  const tempMap = new MapStack()
 
-  // 监听撤回键
+  // 监听撤回键（使用栈）
   document.onkeydown = (e) => {
     if (e.ctrlKey == true && e.key == 'z') {
-      console.log('撤回')
-      gridManager.setMap(tempMap)
-      // 然后马上刷新画面
-      DrawTools.drawGrid(
-        ctx,
-        _space,
-        canvas.width,
-        _space * _gridRowSize,
-        _gridColSize,
-        _gridRowSize
-      )
+      // 如果栈内不为空才撤回
+      if (tempMap.size() !== 0) {
+        // 弹栈
+        gridManager.setMap(tempMap.pop())
+        console.log(tempMap.size())
 
-      // 绘制 Map 里面已有的 Tile
-      DrawTools.drawMapTile(ctx, getTileManage(), gridManager, _space)
+        // 然后马上刷新画面
+        DrawTools.drawGrid(
+          ctx,
+          _space,
+          canvas.width,
+          _space * _gridRowSize,
+          _gridColSize,
+          _gridRowSize
+        )
+        console.log('撤回')
+        // 绘制 Map 里面已有的 Tile
+        DrawTools.drawMapTile(ctx, getTileManage(), gridManager, _space)
+      }
     }
   }
 
@@ -81,8 +102,10 @@ export function drawCanvas() {
     let tempX = Math.floor(e.offsetY / _space)
     let tempY = Math.floor(e.offsetX / _space)
 
-    if (getToolType() === Tool.DRAW) {
-      // 单笔刷点击时的绘制
+    tempMap.push(gridManager.getClone())
+
+    // 单笔刷点击时的绘制
+    if (currentTool === Tool.DRAW) {
       RendererTools.singleDownBrush(
         ctx,
         canvas,
@@ -96,7 +119,9 @@ export function drawCanvas() {
         tempX,
         tempY
       )
-    } else if (getToolType() === Tool.FILL) {
+    }
+    // 油漆桶
+    else if (currentTool === Tool.FILL) {
       RendererTools.fillDownBrush(
         ctx,
         canvas,
@@ -113,7 +138,6 @@ export function drawCanvas() {
     isDown = true
     downPosition.x = tempX
     downPosition.y = tempY
-    tempMap = gridManager.getClone()
   }
 
   // 鼠标离开屏幕时
@@ -148,7 +172,7 @@ export function drawCanvas() {
 
       if (isDown) {
         // 单笔刷点击时的绘制
-        if (getToolType() === Tool.DRAW) {
+        if (currentTool === Tool.DRAW) {
           RendererTools.singleDownBrush(
             ctx,
             canvas,
@@ -163,7 +187,7 @@ export function drawCanvas() {
             tempY
           )
         } // 如果是选区笔刷
-        else if (getToolType() === Tool.DRAWAREA) {
+        else if (currentTool === Tool.DRAWAREA) {
           // console.log(downPosition.x, downPosition.y, tempX, tempY)
           RendererTools.areaDownBrush(
             ctx,
@@ -180,13 +204,14 @@ export function drawCanvas() {
             tempX,
             tempY
           )
-        } else if (getToolType() === Tool.ERASE) {
+        } else if (currentTool === Tool.ERASE) {
           console.log('橡皮擦')
-        } else if (getToolType() === Tool.ERASEAREA) {
+        } else if (currentTool === Tool.ERASEAREA) {
           console.log('选区橡皮擦')
         }
-      } else {
-        // 单笔刷未点击时的绘制
+      }
+      // 单笔刷未点击时的绘制
+      else {
         RendererTools.singleNotDownBrush(
           ctx,
           canvas,

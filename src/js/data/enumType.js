@@ -1,11 +1,11 @@
 /**
- * @file 存放笔刷类型工具
+ * @file 存放常用的枚举类型（利用属性模拟枚举）
  *
  * @author author-alsritter(alsritter1@gmail.com)
  */
 
 /**
- * 利用属性模拟枚举，这里主要是标识所用的工具
+ * 这里主要是标识所用的工具
  */
 class Tool {
   /**
@@ -67,4 +67,58 @@ class Tool {
 
 Object.freeze(Tool) // 冻结对象，防止修改
 
-export { Tool }
+/**
+ * 这里主要是标识所用的工具
+ */
+class Layer {
+  /**
+   * 单笔刷
+   */
+  static get BG() {
+    return 0
+  }
+
+  /**
+   * 选区刷
+   */
+  static get COLLISION() {
+    return 1
+  }
+
+  /**
+   * 油漆桶
+   */
+  static get TRAPS() {
+    return 2
+  }
+
+  /**
+   * 前景 foreground
+   */
+  static get FG() {
+    return 3
+  }
+
+  /**
+   * 返回当前选中的图层
+   * @param {Number} index 索引
+   */
+  static returnToolType(index) {
+    switch (index) {
+      case 0:
+        return Layer.BG
+      case 1:
+        return Layer.COLLISION
+      case 2:
+        return Layer.TRAPS
+      case 3:
+        return Layer.FG
+      default:
+        return Layer.BG
+    }
+  }
+}
+
+Object.freeze(Layer) // 冻结对象，防止修改
+
+export { Tool,Layer }
