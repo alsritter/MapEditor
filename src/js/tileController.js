@@ -69,7 +69,7 @@ function drawTiles() {
     exportData()
   }
 
-  img.src = '/src/img/tiles.png'
+  img.src = './src/img/tiles.png'
 }
 
 window.addEventListener('load', drawTiles, false)
