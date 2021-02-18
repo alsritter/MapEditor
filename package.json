@@ -1,0 +1,31 @@
+{
+  "name": "MapEditor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "./node_modules/.bin/babel src --out-dir lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alsritter/MapEditor.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alsritter/MapEditor/issues"
+  },
+  "homepage": "https://github.com/alsritter/MapEditor#readme",
+  "dependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.12.13",
+    "@babel/plugin-proposal-private-methods": "^7.12.13",
+    "@babel/polyfill": "^7.12.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.12.16",
+    "@babel/core": "^7.12.16",
+    "@babel/preset-env": "^7.12.16"
+  }
+}
