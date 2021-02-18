@@ -23,6 +23,8 @@ class TileIndex {
 const _tileIndex = new TileIndex()
 let _tileManager // 需要把这个传递出去，所以这里需要提升到全局
 
+
+
 function drawTiles() {
   // 先绘制网格
   const canvas = document.getElementById('tileCanvas')
@@ -72,15 +74,7 @@ function drawTiles() {
   img.src = './src/img/tiles.png'
 }
 
-window.addEventListener(
-  'load',
-  () => {
-    setTimeout(() => {
-      drawTiles()
-    }, 3000)
-  },
-  false
-)
+window.addEventListener('load', drawTiles, false)
 
 /**
  * 用来传递当前取色器取到的格子给下面的画布
