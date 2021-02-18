@@ -8,6 +8,7 @@ import { DrawTools } from './view/drawTools.js'
 import { GridManager } from './data/gridManager.js'
 import { TileManager } from './data/TileManager.js'
 import { drawCanvas } from './canvasController.js'
+import { exportData } from './exportMapData.js'
 
 /**
  * Tile 的索引
@@ -30,8 +31,8 @@ function drawTiles() {
     canvas.width = img.width
     canvas.height = img.height
 
-    const _cols = 8
-    const _rows = 8
+    const _cols = 16
+    const _rows = 16
 
     // 先获取每个图形格子的大小
     const _space = img.width / _cols
@@ -49,7 +50,7 @@ function drawTiles() {
         Math.floor(e.offsetY / _space),
         Math.floor(e.offsetX / _space)
       )
-      DrawTools.drawDarkTile(ctx, _space, temp.x, temp.y)
+      DrawTools.drawDark(ctx, _space, temp.x, temp.y)
 
       // 修改下当前选中的 Tile的索引
       _tileIndex.x = Math.floor(e.offsetY / _space)
@@ -64,9 +65,11 @@ function drawTiles() {
 
     // 等待取色器执行完成再执行这块
     drawCanvas()
+    // 等待上面的画布加载完成才能导出数据
+    exportData()
   }
 
-  img.src = '/src/img/tiles2.png'
+  img.src = '/src/img/tiles.png'
 }
 
 window.addEventListener('load', drawTiles, false)

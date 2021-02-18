@@ -47,7 +47,7 @@ export class DrawTools {
    * @param {Number} x 绘制目的地的 x
    * @param {Number} y 绘制目的地的 y
    */
-  static drawDarkTile(ctx, space, x, y) {
+  static drawDark(ctx, space, x, y) {
     ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'
     ctx.beginPath()
     ctx.rect(x, y, space, space)

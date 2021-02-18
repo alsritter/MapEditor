@@ -14,6 +14,16 @@ import { BrushTools } from './data/brushTools.js'
 import { Tool } from './data/enumType.js'
 import { MapStack } from './data/mapStack.js'
 
+// 将这个提取为全局的（核心的地图数据）
+const gridManagerArray = []
+
+/**
+ * @returns {GridManager[]} 返回 Map
+ */
+export function getMapData() {
+  return gridManagerArray
+}
+
 export function drawCanvas() {
   // 取得画布
   const canvas = document.getElementById('canvas')
@@ -50,7 +60,6 @@ export function drawCanvas() {
   }
 
   // 这里实例化图层数量个 GridManager
-  const gridManagerArray = []
   for (let i = 0; i < layer.options.length; i++) {
     gridManagerArray.push(new GridManager(_space, _gridColSize, _gridRowSize))
   }
@@ -158,45 +167,69 @@ export function drawCanvas() {
     downPosition.x = tempX
     downPosition.y = tempY
 
-    // 单笔刷点击时的绘制
-    if (currentTool === Tool.DRAW) {
-      BrushTools.singleDownBrush(
+    // 因为橡皮擦不显示 Tile，只显示阴影，所以需要单独拿出来
+    switch (currentTool) {
+      // 单笔刷点击时的绘制
+      case Tool.DRAW:
+        BrushTools.singleDownBrush(
+          gridManagerArray,
+          currentLayer,
+          getTileIndex().x,
+          getTileIndex().y,
+          tempX,
+          tempY
+        )
+        break
+      // 油漆桶
+      case Tool.FILL:
+        BrushTools.fillDownBrush(
+          _gridRowSize,
+          _gridColSize,
+          gridManagerArray,
+          currentLayer,
+          getTileIndex().x,
+          getTileIndex().y
+        )
+        break
+      // 橡皮擦
+      case Tool.ERASE:
+        BrushTools.Erase(gridManagerArray, currentLayer, tempX, tempY)
+        break
+    }
+    // 因为橡皮擦不显示 Tile，只显示阴影，所以需要单独拿出来
+    if (currentTool == Tool.ERASE) {
+      // 刷新画布
+      RendererTools.refreshAndShowDark(
+        ctx,
+        canvas,
+        _space,
+        _gridRowSize,
+        _gridColSize,
         gridManagerArray,
         currentLayer,
+        isShowAll,
+        getTileManage(),
+        tempX,
+        tempY
+      )
+    } else {
+      // 单笔刷未点击时的绘制
+      RendererTools.refreshAndShowTile(
+        ctx,
+        canvas,
+        _space,
+        _gridRowSize,
+        _gridColSize,
+        gridManagerArray,
+        currentLayer,
+        isShowAll,
+        getTileManage(),
         getTileIndex().x,
         getTileIndex().y,
         tempX,
         tempY
       )
     }
-    // 油漆桶
-    else if (currentTool === Tool.FILL) {
-      BrushTools.fillDownBrush(
-        _gridRowSize,
-        _gridColSize,
-        gridManagerArray,
-        currentLayer,
-        getTileIndex().x,
-        getTileIndex().y
-      )
-    }
-
-    // 刷新画布
-    RendererTools.refreshAndShowTile(
-      ctx,
-      canvas,
-      _space,
-      _gridRowSize,
-      _gridColSize,
-      gridManagerArray,
-      currentLayer,
-      isShowAll,
-      getTileManage(),
-      getTileIndex().x,
-      getTileIndex().y,
-      tempX,
-      tempY
-    )
   }
 
   // 鼠标离开屏幕时
@@ -272,22 +305,41 @@ export function drawCanvas() {
             break
         }
       }
-      // 单笔刷未点击时的绘制
-      RendererTools.refreshAndShowTile(
-        ctx,
-        canvas,
-        _space,
-        _gridRowSize,
-        _gridColSize,
-        gridManagerArray,
-        currentLayer,
-        isShowAll,
-        getTileManage(),
-        getTileIndex().x,
-        getTileIndex().y,
-        tempX,
-        tempY
-      )
+
+      // 因为橡皮擦不显示 Tile，只显示阴影，所以需要单独拿出来
+      if (currentTool == Tool.ERASE) {
+        // 刷新画布
+        RendererTools.refreshAndShowDark(
+          ctx,
+          canvas,
+          _space,
+          _gridRowSize,
+          _gridColSize,
+          gridManagerArray,
+          currentLayer,
+          isShowAll,
+          getTileManage(),
+          tempX,
+          tempY
+        )
+      } else {
+        // 单笔刷未点击时的绘制
+        RendererTools.refreshAndShowTile(
+          ctx,
+          canvas,
+          _space,
+          _gridRowSize,
+          _gridColSize,
+          gridManagerArray,
+          currentLayer,
+          isShowAll,
+          getTileManage(),
+          getTileIndex().x,
+          getTileIndex().y,
+          tempX,
+          tempY
+        )
+      }
     }
   }
 }
