@@ -30,8 +30,8 @@ function drawTiles() {
     canvas.width = img.width
     canvas.height = img.height
 
-    const _cols = 16
-    const _rows = 16
+    const _cols = 8
+    const _rows = 8
 
     // 先获取每个图形格子的大小
     const _space = img.width / _cols
@@ -66,7 +66,7 @@ function drawTiles() {
     drawCanvas()
   }
 
-  img.src = '/src/img/tiles.png'
+  img.src = '/src/img/tiles2.png'
 }
 
 window.addEventListener('load', drawTiles, false)

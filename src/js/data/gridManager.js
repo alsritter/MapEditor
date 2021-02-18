@@ -97,4 +97,18 @@ export class GridManager {
   setMap(newMap) {
     this.#map = newMap
   }
+
+  /**
+   * 清空当前画布
+   */
+  cleanMap() {
+    for (let i = 0; i < this.#map.length; i++) {
+      let temp = this.#map[i]
+      for (let j = 0; j < temp.length; j++) {
+        temp[j].tileX = null
+        temp[i].tileY = null
+      }
+      this.#map[i] = temp
+    }
+  }
 }

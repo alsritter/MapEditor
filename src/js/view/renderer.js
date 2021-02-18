@@ -1,5 +1,5 @@
 /**
- * @file 渲染绘制，这里并不是完全的数据和渲染分离，但是懒得抽象了
+ * @file 渲染绘制，这里只负责渲染数据，不负责刷新数据
  *
  * @author author-alsritter(alsritter1@gmail.com)
  */
@@ -10,37 +10,90 @@ import { DrawTools } from './drawTools.js'
 
 export class RendererTools {
   /**
-   * 基本修改了页面数据都需要调用这个刷新
+   * 基本修改了页面数据都需要调用这个刷新（不绘制选中的 Tile）
    *
    * @param {CanvasRenderingContext2D} ctx
    * @param {HTMLElement} canvas
    * @param {Number} space
    * @param {Number} rows
    * @param {Number} cols
-   * @param {GridManager} gridManager
+   * @param {GridManager[]} gridManagerArray
+   * @param {Layer} layer 当前选中的图层
+   * @param {Boolean} showAll 是否显示全部图层，true 表示是
+   * @param {TileManager} tileManager
+   */
+  static refresh(
+    ctx,
+    canvas,
+    space,
+    rows,
+    cols,
+    gridManagerArray,
+    layer,
+    showAll,
+    tileManager
+  ) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    DrawTools.drawGrid(ctx, space, canvas.width, space * rows, cols, rows)
+
+    // 如果显示全部图层则，遍历刷新
+    if (showAll) {
+      for (let i = 0; i < gridManagerArray.length; i++) {
+        // 绘制 Map 里面已有的 Tile
+        DrawTools.drawMapTile(ctx, tileManager, gridManagerArray[i], space)
+      }
+    } else {
+      // 绘制 Map 里面已有的 Tile
+      DrawTools.drawMapTile(ctx, tileManager, gridManagerArray[layer], space)
+    }
+  }
+
+  /**
+   * 作用同上，但是会绘制选中的 Tile
+   *
+   * @param {CanvasRenderingContext2D} ctx
+   * @param {HTMLElement} canvas
+   * @param {Number} space
+   * @param {Number} rows
+   * @param {Number} cols
+   * @param {GridManager[]} gridManagerArray
+   * @param {Layer} layer 当前选中的图层
+   * @param {Boolean} showAll 是否显示全部图层，true 表示是
    * @param {TileManager} tileManager
    * @param {Number} tileX Tile 的索引
    * @param {Number} tileY Tile 的索引
    * @param {Number} posX 画布上的方块的索引
    * @param {Number} posY 画布上的方块的索引
    */
-  static #baseRenderer(
+  static refreshAndShowTile(
     ctx,
-    space,
     canvas,
+    space,
     rows,
     cols,
+    gridManagerArray,
+    layer,
+    showAll,
     tileManager,
-    gridManager,
     tileX,
     tileY,
     posX,
     posY
   ) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
     DrawTools.drawGrid(ctx, space, canvas.width, space * rows, cols, rows)
 
-    // 绘制 Map 里面已有的 Tile
-    DrawTools.drawMapTile(ctx, tileManager, gridManager, space)
+    // 如果显示全部图层则，遍历刷新
+    if (showAll) {
+      for (let i = 0; i < gridManagerArray.length; i++) {
+        // 绘制 Map 里面已有的 Tile
+        DrawTools.drawMapTile(ctx, tileManager, gridManagerArray[i], space)
+      }
+    } else {
+      // 绘制 Map 里面已有的 Tile
+      DrawTools.drawMapTile(ctx, tileManager, gridManagerArray[layer], space)
+    }
+
     // 显示当前选中的 Tile
     DrawTools.drawTile(
       ctx,
@@ -48,223 +101,16 @@ export class RendererTools {
       tileX,
       tileY,
       space,
-      gridManager.getGrid(posX, posY).x,
-      gridManager.getGrid(posX, posY).y
+      gridManagerArray[layer].getGrid(posX, posY).x,
+      gridManagerArray[layer].getGrid(posX, posY).y
     )
-  }
 
-  /**
-   * 鼠标在画布上拖动时（未点击）实时刷新页面，单笔刷
-   *
-   * @param {CanvasRenderingContext2D} ctx
-   * @param {HTMLElement} canvas
-   * @param {Number} space
-   * @param {Number} rows
-   * @param {Number} cols
-   * @param {GridManager} gridManager
-   * @param {TileManager} tileManager
-   * @param {Number} tileX Tile 的索引
-   * @param {Number} tileY Tile 的索引
-   * @param {Number} posX 画布上的方块的索引
-   * @param {Number} posY 画布上的方块的索引
-   */
-  static singleNotDownBrush(
-    ctx,
-    canvas,
-    space,
-    rows,
-    cols,
-    gridManager,
-    tileManager,
-    tileX,
-    tileY,
-    posX,
-    posY
-  ) {
-    RendererTools.#baseRenderer(
+     // 绘制阴影
+     DrawTools.drawDarkTile(
       ctx,
       space,
-      canvas,
-      rows,
-      cols,
-      tileManager,
-      gridManager,
-      tileX,
-      tileY,
-      posX,
-      posY
+      gridManagerArray[layer].getGrid(posX, posY).x,
+      gridManagerArray[layer].getGrid(posX, posY).y
     )
-
-    // 绘制阴影
-    DrawTools.drawDarkTile(
-      ctx,
-      space,
-      gridManager.getGrid(posX, posY).x,
-      gridManager.getGrid(posX, posY).y
-    )
-  }
-
-  /**
-   * 鼠标在画布上拖动时（点击时）实时刷新页面，单笔刷
-   * 还需要把数据存起来
-   *
-   * @param {CanvasRenderingContext2D} ctx
-   * @param {HTMLElement} canvas
-   * @param {Number} space
-   * @param {Number} rows
-   * @param {Number} cols
-   * @param {GridManager} gridManager
-   * @param {TileManager} tileManager
-   * @param {Number} tileX Tile 的索引
-   * @param {Number} tileY Tile 的索引
-   * @param {Number} posX 画布上的方块的索引
-   * @param {Number} posY 画布上的方块的索引
-   */
-  static singleDownBrush(
-    ctx,
-    canvas,
-    space,
-    rows,
-    cols,
-    gridManager,
-    tileManager,
-    tileX,
-    tileY,
-    posX,
-    posY
-  ) {
-    // 将当前选中的格子存储起来
-    gridManager.getGrid(posX, posY).tileX = tileX
-    gridManager.getGrid(posX, posY).tileY = tileY
-
-    RendererTools.#baseRenderer(
-      ctx,
-      space,
-      canvas,
-      rows,
-      cols,
-      tileManager,
-      gridManager,
-      tileX,
-      tileY,
-      posX,
-      posY
-    )
-  }
-
-  /**
-   * 鼠标在画布上拖动时（点击时）实时刷新页面，选区刷还需
-   * 要把数据存起来，这里需要加个判断，如果起点大于终点的
-   * 位置则不刷新的格子
-   *
-   * @param {CanvasRenderingContext2D} ctx
-   * @param {HTMLElement} canvas
-   * @param {Number} space
-   * @param {Number} rows
-   * @param {Number} cols
-   * @param {GridManager} gridManager
-   * @param {TileManager} tileManager
-   * @param {Number} tileX Tile 的索引
-   * @param {Number} tileY Tile 的索引
-   * @param {Number} startPosX 画布上的方块的起点索引
-   * @param {Number} startPosY 画布上的方块的起点索引
-   * @param {Number} endPosX 画布上的方块的当前索引
-   * @param {Number} endPosy 画布上的方块的当前索引
-   */
-  static areaDownBrush(
-    ctx,
-    canvas,
-    space,
-    rows,
-    cols,
-    gridManager,
-    tileManager,
-    tileX,
-    tileY,
-    startPosX,
-    startPosY,
-    endPosX,
-    endPosY
-  ) {
-    let maxPosX
-    let minPosX
-    let maxPosY
-    let minPosY
-
-    if (startPosX > endPosX) {
-      maxPosX = startPosX
-      minPosX = endPosX
-    } else {
-      maxPosX = endPosX
-      minPosX = startPosX
-    }
-
-    if (startPosY > endPosY) {
-      maxPosY = startPosY
-      minPosY = endPosY
-    } else {
-      maxPosY = endPosY
-      minPosY = startPosY
-    }
-
-    // 将当前选中的格子存储起来
-    for (let i = minPosX; i <= maxPosX; i++) {
-      for (let j = minPosY; j <= maxPosY; j++) {
-        gridManager.getGrid(i, j).tileX = tileX
-        gridManager.getGrid(i, j).tileY = tileY
-      }
-    }
-
-    RendererTools.#baseRenderer(
-      ctx,
-      space,
-      canvas,
-      rows,
-      cols,
-      tileManager,
-      gridManager,
-      tileX,
-      tileY,
-      endPosX,
-      endPosY
-    )
-  }
-
-  /**
-   * 填充当前画布
-   *
-   * @param {CanvasRenderingContext2D} ctx
-   * @param {HTMLElement} canvas
-   * @param {Number} space
-   * @param {Number} rows
-   * @param {Number} cols
-   * @param {GridManager} gridManager
-   * @param {TileManager} tileManager
-   * @param {Number} tileX Tile 的索引
-   * @param {Number} tileY Tile 的索引
-   */
-  static fillDownBrush(
-    ctx,
-    canvas,
-    space,
-    rows,
-    cols,
-    gridManager,
-    tileManager,
-    tileX,
-    tileY
-  ) {
-    // 将当前选中的格子存储起来
-    for (let i = 0; i < rows; i++) {
-      for (let j = 0; j < cols; j++) {
-        gridManager.getGrid(i, j).tileX = tileX
-        gridManager.getGrid(i, j).tileY = tileY
-      }
-    }
-
-    // 绘制网格
-    DrawTools.drawGrid(ctx, space, canvas.width, space * rows, cols, rows)
-    // 绘制 Map 里面已有的 Tile
-    DrawTools.drawMapTile(ctx, tileManager, gridManager, space)
   }
 }

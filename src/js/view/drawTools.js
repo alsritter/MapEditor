@@ -116,10 +116,15 @@ export class DrawTools {
   static drawMapTile(ctx, map, pos, space) {
     for (let i = 0; i < pos.getRowNum(); i++) {
       for (let j = 0; j < pos.getColNum(); j++) {
-        // 如果还是 null 则直接跳过
+        // 如果还是 null 或者为空的则直接跳过
         if (
           pos.getGrid(i, j).tileX != null &&
-          pos.getGrid(i, j).tileY != null
+          pos.getGrid(i, j).tileY != null &&
+          !DrawTools.#isEmpty(
+            map,
+            pos.getGrid(i, j).tileX,
+            pos.getGrid(i, j).tileY
+          ) // 这个判断得放在后面
         ) {
           DrawTools.drawTile(
             ctx,
@@ -133,6 +138,16 @@ export class DrawTools {
         }
       }
     }
+  }
+
+  /**
+   * 判度当前位置上的图片是否是空的
+   * @param {TileManager} map
+   * @param {Number} tileX
+   * @param {Number} tileY
+   */
+  static #isEmpty(map, tileX, tileY) {
+    return map.getTile(tileX, tileY).isEmpty
   }
 
   /**
