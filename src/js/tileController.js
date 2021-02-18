@@ -72,7 +72,15 @@ function drawTiles() {
   img.src = './src/img/tiles.png'
 }
 
-window.addEventListener('load', drawTiles, false)
+window.addEventListener(
+  'load',
+  () => {
+    setTimeout(() => {
+      drawTiles()
+    }, 3000)
+  },
+  false
+)
 
 /**
  * 用来传递当前取色器取到的格子给下面的画布
