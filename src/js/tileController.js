@@ -30,8 +30,9 @@ function drawTiles() {
   const canvas = document.getElementById('tileCanvas')
   const img = new Image()
   img.onload = () => {
-    canvas.width = img.width
-    canvas.height = img.height
+    // canvas.width = img.width
+    // canvas.height = img.height
+
 
     const _cols = 16
     const _rows = 16
