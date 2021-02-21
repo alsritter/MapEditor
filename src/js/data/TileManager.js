@@ -99,6 +99,15 @@ export class TileManager {
   }
 
   /**
+   * @param {Number} x Tile 的索引
+   * @param {Number} y Tile 的索引
+   * @returns {Boolean} 返回 当前位置的格子是否是空的
+   */
+  isEmpty(x, y) {
+    return this.#tileMap[x][y].isEmpty
+  }
+
+  /**
    * @returns {Number} 返回 cols
    */
   getCols() {

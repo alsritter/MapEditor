@@ -5,6 +5,7 @@
  */
 
 import { GridManager } from './gridManager.js'
+import { TileManager } from './TileManager.js'
 
 export class BrushTools {
   /**
@@ -12,13 +13,24 @@ export class BrushTools {
    * 还需要把数据存起来
    *
    * @param {GridManager[]} gridManagerArray
+   * @param {TileManager} tileManager 用于判断当前是否是空的
    * @param {Number} layer 当前选中的图层
    * @param {Number} tileX Tile 的索引
    * @param {Number} tileY Tile 的索引
    * @param {Number} posX 画布上的方块的索引
    * @param {Number} posY 画布上的方块的索引
    */
-  static singleDownBrush(gridManagerArray, layer, tileX, tileY, posX, posY) {
+  static singleDownBrush(
+    gridManagerArray,
+    tileManager,
+    layer,
+    tileX,
+    tileY,
+    posX,
+    posY
+  ) {
+    if (tileManager.isEmpty(tileX,tileY)) return
+
     // 将当前选中的格子存储起来
     gridManagerArray[layer].getGrid(posX, posY).tileX = tileX
     gridManagerArray[layer].getGrid(posX, posY).tileY = tileY
@@ -30,6 +42,7 @@ export class BrushTools {
    * 位置则不刷新的格子
    *
    * @param {GridManager[]} gridManagerArray
+   * @param {TileManager} tileManager 用于判断当前是否是空的
    * @param {Number} layer 当前选中的图层
    * @param {Number} tileX Tile 的索引
    * @param {Number} tileY Tile 的索引
@@ -40,6 +53,7 @@ export class BrushTools {
    */
   static areaDownBrush(
     gridManagerArray,
+    tileManager,
     layer,
     tileX,
     tileY,
@@ -48,6 +62,9 @@ export class BrushTools {
     endPosX,
     endPosY
   ) {
+
+    if (tileManager.isEmpty(tileX,tileY)) return
+
     let maxPosX
     let minPosX
     let maxPosY
@@ -84,11 +101,22 @@ export class BrushTools {
    * @param {Number} rows
    * @param {Number} cols
    * @param {GridManager[]} gridManagerArray
+   * @param {TileManager} tileManager 用于判断当前是否是空的
    * @param {Number} layer 当前选中的图层
    * @param {Number} tileX Tile 的索引
    * @param {Number} tileY Tile 的索引
    */
-  static fillDownBrush(rows, cols, gridManagerArray, layer, tileX, tileY) {
+  static fillDownBrush(
+    rows,
+    cols,
+    gridManagerArray,
+    tileManager,
+    layer,
+    tileX,
+    tileY
+  ) {
+    if (tileManager.isEmpty(tileX,tileY)) return
+
     // 将当前选中的格子存储起来
     for (let i = 0; i < rows; i++) {
       for (let j = 0; j < cols; j++) {

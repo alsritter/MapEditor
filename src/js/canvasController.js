@@ -167,12 +167,15 @@ export function drawCanvas() {
     downPosition.x = tempX
     downPosition.y = tempY
 
+    // 如果是空的则无法绘制
+
     // 因为橡皮擦不显示 Tile，只显示阴影，所以需要单独拿出来
     switch (currentTool) {
       // 单笔刷点击时的绘制
       case Tool.DRAW:
         BrushTools.singleDownBrush(
           gridManagerArray,
+          getTileManage(),
           currentLayer,
           getTileIndex().x,
           getTileIndex().y,
@@ -186,6 +189,7 @@ export function drawCanvas() {
           _gridRowSize,
           _gridColSize,
           gridManagerArray,
+          getTileManage(),
           currentLayer,
           getTileIndex().x,
           getTileIndex().y
@@ -268,6 +272,7 @@ export function drawCanvas() {
           case Tool.DRAW:
             BrushTools.singleDownBrush(
               gridManagerArray,
+              getTileManage(),
               currentLayer,
               getTileIndex().x,
               getTileIndex().y,
@@ -279,6 +284,7 @@ export function drawCanvas() {
           case Tool.DRAWAREA:
             BrushTools.areaDownBrush(
               gridManagerArray,
+              getTileManage(),
               currentLayer,
               getTileIndex().x,
               getTileIndex().y,
