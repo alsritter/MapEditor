@@ -66,8 +66,6 @@ export function drawCanvas(): void {
     currentTool = Tool.returnToolType(toolType.selectedIndex)
   }
 
-
-
   // 这里实例化图层数量个 GridManager
   for (let i = 0; i < layer.options.length; i++) {
     gridManagerArray.push(new GridManager(_space, _gridColSize, _gridRowSize))
@@ -170,7 +168,7 @@ export function drawCanvas(): void {
         // 弹栈
         const temp = tempMap.pop()
         gridManagerArray[temp.layer].setMap(temp.map)
-
+        cacheMap.setAllChange() // 撤回也别忘了清空缓存
         RendererTools.refresh(
           ctx,
           canvas,
@@ -209,6 +207,18 @@ export function drawCanvas(): void {
     switch (currentTool) {
       // 单笔刷点击时的绘制
       case Tool.DRAW:
+        BrushTools.singleDownBrush(
+          gridManagerArray,
+          getTileManage(),
+          currentLayer,
+          getTileIndex().x,
+          getTileIndex().y,
+          tempX,
+          tempY,
+          cacheMap
+        )
+        break
+      case Tool.DRAWAREA: // 单击时的选区刷是单笔刷的效果
         BrushTools.singleDownBrush(
           gridManagerArray,
           getTileManage(),
