@@ -1,7 +1,7 @@
 /**
  * @file 存放常用的枚举类型（利用属性模拟枚举）
  *
- * @author author-alsritter(alsritter1@gmail.com)
+ * @author alsritter(alsritter1@gmail.com)
  */
 
 /**
@@ -47,7 +47,7 @@ class Tool {
    * 返回当前选中的工具类型
    * @param {Number} index 索引
    */
-  static returnToolType(index) {
+  static returnToolType(index: number): number {
     switch (index) {
       case 0:
         return Tool.DRAW
@@ -64,7 +64,5 @@ class Tool {
     }
   }
 }
-
-Object.freeze(Tool) // 冻结对象，防止修改
 
 export { Tool }

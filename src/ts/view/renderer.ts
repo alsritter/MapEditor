@@ -1,12 +1,12 @@
 /**
  * @file 渲染绘制，这里只负责渲染数据，不负责刷新数据
  *
- * @author author-alsritter(alsritter1@gmail.com)
+ * @author alsritter(alsritter1@gmail.com)
  */
 
-import { TileManager } from '../data/TileManager.js'
-import { GridManager } from '../data/gridManager.js'
-import { DrawTools } from './drawTools.js'
+import { TileManager } from '../data/TileManager'
+import { GridManager } from '../data/gridManager'
+import { DrawTools } from './drawTools'
 
 export class RendererTools {
   /**
@@ -18,21 +18,21 @@ export class RendererTools {
    * @param {Number} rows
    * @param {Number} cols
    * @param {GridManager[]} gridManagerArray
-   * @param {Layer} layer 当前选中的图层
+   * @param {Number} layer 当前选中的图层
    * @param {Boolean} showAll 是否显示全部图层，true 表示是
    * @param {TileManager} tileManager
    */
   static refresh(
-    ctx,
-    canvas,
-    space,
-    rows,
-    cols,
-    gridManagerArray,
-    layer,
-    showAll,
-    tileManager
-  ) {
+    ctx: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement,
+    space: number,
+    rows: number,
+    cols: number,
+    gridManagerArray: GridManager[],
+    layer: number,
+    showAll: boolean,
+    tileManager: TileManager
+  ): void {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     DrawTools.drawGrid(ctx, space, canvas.width, space * rows, cols, rows)
 
@@ -52,7 +52,7 @@ export class RendererTools {
    * 作用同上，但是会绘制选中的 Tile
    *
    * @param {CanvasRenderingContext2D} ctx
-   * @param {HTMLElement} canvas
+   * @param {HTMLCanvasElement} canvas
    * @param {Number} space
    * @param {Number} rows
    * @param {Number} cols
@@ -66,20 +66,20 @@ export class RendererTools {
    * @param {Number} posY 画布上的方块的索引
    */
   static refreshAndShowTile(
-    ctx,
-    canvas,
-    space,
-    rows,
-    cols,
-    gridManagerArray,
-    layer,
-    showAll,
-    tileManager,
-    tileX,
-    tileY,
-    posX,
-    posY
-  ) {
+    ctx: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement,
+    space: number,
+    rows: number,
+    cols: number,
+    gridManagerArray: GridManager[],
+    layer: number,
+    showAll: boolean,
+    tileManager: TileManager,
+    tileX: number,
+    tileY: number,
+    posX: number,
+    posY: number
+  ): void {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     DrawTools.drawGrid(ctx, space, canvas.width, space * rows, cols, rows)
 
@@ -118,7 +118,7 @@ export class RendererTools {
    * 作用同上，但是只绘制阴影
    *
    * @param {CanvasRenderingContext2D} ctx
-   * @param {HTMLElement} canvas
+   * @param {HTMLCanvasElement} canvas
    * @param {Number} space
    * @param {Number} rows
    * @param {Number} cols
@@ -132,18 +132,18 @@ export class RendererTools {
    * @param {Number} posY 画布上的方块的索引
    */
   static refreshAndShowDark(
-    ctx,
-    canvas,
-    space,
-    rows,
-    cols,
-    gridManagerArray,
-    layer,
-    showAll,
-    tileManager,
-    posX,
-    posY
-  ) {
+    ctx: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement,
+    space: number,
+    rows: number,
+    cols: number,
+    gridManagerArray: GridManager[],
+    layer: number,
+    showAll: boolean,
+    tileManager: TileManager,
+    posX: number,
+    posY: number
+  ): void {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     DrawTools.drawGrid(ctx, space, canvas.width, space * rows, cols, rows)
 

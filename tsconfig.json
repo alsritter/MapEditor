@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist",
+    "allowJs": true,
+    "noImplicitAny": true, //不允许使用 any
+    "module": "es6",
+    "target": "es5",
+  },
+  "include": [
+    "./src/**/*"
+  ]
+}

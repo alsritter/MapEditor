@@ -1,19 +1,23 @@
 /**
  * @file 取色器区域的控制器
  *
- * @author author-alsritter(alsritter1@gmail.com)
+ * @author alsritter(alsritter1@gmail.com)
  */
 
-import { DrawTools } from './view/drawTools.js'
-import { GridManager } from './data/gridManager.js'
-import { TileManager } from './data/TileManager.js'
-import { drawCanvas } from './canvasController.js'
-import { exportData } from './exportMapData.js'
+import { DrawTools } from './view/drawTools'
+import { GridManager } from './data/gridManager'
+import { TileManager } from './data/TileManager'
+import { drawCanvas } from './canvasController'
+import { exportData } from './exportMapData'
 
 /**
  * Tile 的索引
  */
 class TileIndex {
+
+  x: number
+  y: number
+
   constructor() {
     this.x = 0
     this.y = 0
@@ -21,13 +25,13 @@ class TileIndex {
 }
 
 const _tileIndex = new TileIndex()
-let _tileManager // 需要把这个传递出去，所以这里需要提升到全局
+let _tileManager: TileManager // 需要把这个传递出去，所以这里需要提升到全局
 
 
 
 function drawTiles() {
   // 先绘制网格
-  const canvas = document.getElementById('tileCanvas')
+  const canvas = document.getElementById('tileCanvas') as HTMLCanvasElement
   const img = new Image()
   img.onload = () => {
     canvas.width = img.width
@@ -40,7 +44,7 @@ function drawTiles() {
     // 先获取每个图形格子的大小
     const _space = img.width / _cols
 
-    let ctx = canvas.getContext('2d')
+    const ctx = canvas.getContext('2d')
     const gridManager = new GridManager(_space, _cols, _rows)
     _tileManager = new TileManager(ctx, _cols, _rows, img)
 
@@ -49,7 +53,7 @@ function drawTiles() {
 
     // 根据鼠标点击取得格子
     canvas.onmousedown = (e) => {
-      let temp = gridManager.getGrid(
+      const temp = gridManager.getGrid(
         Math.floor(e.offsetY / _space),
         Math.floor(e.offsetX / _space)
       )
@@ -60,7 +64,7 @@ function drawTiles() {
       _tileIndex.y = Math.floor(e.offsetX / _space)
     }
 
-    canvas.onmouseup = (e) => {
+    canvas.onmouseup = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       DrawTools.drawBackground(ctx, canvas.width, canvas.height)
       DrawTools.drawAllTile(ctx, _tileManager, gridManager, _space)
@@ -82,7 +86,7 @@ window.addEventListener('load', drawTiles, false)
  *
  * @returns {TileIndex} 返回 TileIndex
  */
-export function getTileIndex() {
+export function getTileIndex(): TileIndex {
   return _tileIndex
 }
 
@@ -91,6 +95,6 @@ export function getTileIndex() {
  *
  * @returns {TileManager} 返回 TileManager
  */
-export function getTileManage() {
+export function getTileManage(): TileManager {
   return _tileManager
 }

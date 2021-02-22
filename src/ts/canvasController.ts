@@ -2,41 +2,38 @@
  * @file 画布区域的控制器，这个需要等待 tileController 执行完后再执行，
  * 所以将这个 Controller 暴露出去让 tileController 执行
  *
- * @author author-alsritter(alsritter1@gmail.com)
+ * @author alsritter(alsritter1@gmail.com)
  */
 
-import { DrawTools } from './view/drawTools.js'
-import { GridManager } from './data/gridManager.js'
-import { getTileIndex, getTileManage } from './tileController.js'
-import { TileManager } from './data/TileManager.js'
-import { RendererTools } from './view/renderer.js'
-import { BrushTools } from './data/brushTools.js'
-import { Tool } from './data/enumType.js'
-import { MapStack } from './data/mapStack.js'
+import { DrawTools } from './view/drawTools'
+import { Grid, GridManager } from './data/gridManager'
+import { getTileIndex, getTileManage } from './tileController'
+import { RendererTools } from './view/renderer'
+import { BrushTools } from './data/brushTools'
+import { Tool } from './data/enumType'
+import { MapStack } from './data/mapStack'
 
 // 将这个提取为全局的（核心的地图数据）
-const gridManagerArray = []
+const gridManagerArray: GridManager[] = new Array<GridManager>()
 
 /**
  * @returns {GridManager[]} 返回 Map
  */
-export function getMapData() {
+export function getMapData(): GridManager[] {
   return gridManagerArray
 }
 
-export function drawCanvas() {
+export function drawCanvas(): void {
   // 取得画布
-  const canvas = document.getElementById('canvas')
+  const canvas = document.getElementById('canvas') as HTMLCanvasElement
   // 取得绘图工具选择
-  const toolType = document.getElementById('brushTools')
+  const toolType = document.getElementById('brushTools') as HTMLSelectElement
   // 取得图层
-  const layer = document.getElementById('layer')
+  const layer = document.getElementById('layer') as HTMLSelectElement
   // 显示模式
-  const showType = document.getElementById('showType')
+  const showType = document.getElementById('showType') as HTMLDivElement
   // 清空画布
-  const cleanButton = document.getElementById('clearCanvas')
-
-  // 玩家只能决定地图有多少块画布
+  const cleanButton = document.getElementById('clearCanvas') as HTMLButtonElement
 
   // 设置网格的行列
   const _gridColSize = 50
@@ -49,12 +46,13 @@ export function drawCanvas() {
   let currentLayer = 0
   let isShowAll = true
 
-  toolType.onchange = (e) => {
+  // 使用的工具
+  toolType.onchange = () => {
     console.log(toolType.options[toolType.selectedIndex].text)
     currentTool = Tool.returnToolType(toolType.selectedIndex)
   }
 
-  layer.onchange = (e) => {
+  layer.onchange = () => {
     console.log(layer.options[layer.selectedIndex].text)
     currentLayer = layer.selectedIndex
   }
@@ -64,7 +62,8 @@ export function drawCanvas() {
     gridManagerArray.push(new GridManager(_space, _gridColSize, _gridRowSize))
   }
 
-  let ctx = canvas.getContext('2d')
+  const ctx = canvas.getContext('2d')
+
   DrawTools.drawGrid(
     ctx,
     _space,
@@ -75,7 +74,7 @@ export function drawCanvas() {
   )
 
   // 临时存储当前选中的格子
-  let tempGrid
+  let tempGrid: Grid
   // 标识当前是否按下
   let isDown = false
   // 记录按下时所在的格子
@@ -85,8 +84,8 @@ export function drawCanvas() {
 
   // 改变了显示模式也需要刷新
   showType.onclick = (e) => {
-    if (e.target.tagName == 'INPUT') {
-      isShowAll = e.target.value == '0'
+    if ((e.target as HTMLInputElement).tagName == 'INPUT') {
+      isShowAll = (e.target as HTMLInputElement).value== '0'
       console.log(isShowAll)
 
       RendererTools.refresh(
@@ -104,7 +103,7 @@ export function drawCanvas() {
   }
 
   // 监听清空画布
-  cleanButton.onclick = (e) => {
+  cleanButton.onclick = () => {
     // 清空了画布之前需要入栈
     tempMap.push({
       layer: currentLayer,
@@ -132,7 +131,7 @@ export function drawCanvas() {
       // 如果栈内不为空才撤回
       if (tempMap.size() !== 0) {
         // 弹栈
-        let temp = tempMap.pop()
+        const temp = tempMap.pop()
         gridManagerArray[temp.layer].setMap(temp.map)
         console.log(tempMap.size())
 
@@ -154,8 +153,8 @@ export function drawCanvas() {
 
   // 鼠标点击绘制
   canvas.onmousedown = (e) => {
-    let tempX = Math.floor(e.offsetY / _space)
-    let tempY = Math.floor(e.offsetX / _space)
+    const tempX = Math.floor(e.offsetY / _space)
+    const tempY = Math.floor(e.offsetX / _space)
 
     // 入栈时必须加上当前的 Layer
     tempMap.push({
@@ -237,19 +236,19 @@ export function drawCanvas() {
   }
 
   // 鼠标离开屏幕时
-  canvas.onmouseout = (e) => {
+  canvas.onmouseout = () => {
     isDown = false
   }
 
   // 鼠标松开时
-  canvas.onmouseup = (e) => {
+  canvas.onmouseup = () => {
     isDown = false
   }
 
   // 鼠标移动时（核心区域）
   canvas.onmousemove = (e) => {
-    let tempX = Math.floor(e.offsetY / _space)
-    let tempY = Math.floor(e.offsetX / _space)
+    const tempX = Math.floor(e.offsetY / _space)
+    const tempY = Math.floor(e.offsetX / _space)
 
     // 如果超出屏幕则直接返回
     if (

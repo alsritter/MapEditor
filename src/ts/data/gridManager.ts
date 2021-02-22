@@ -4,7 +4,13 @@
  * @author alsritter(alsritter1@gmail.com)
  */
 
-class Grid {
+export class Grid {
+
+  x: number
+  y: number
+  tileX: number
+  tileY: number
+
   /**
    * 存储一个格子的位置（左上角）
    * @param {Number} x 当前格子在 Map里面的x轴坐标
@@ -12,7 +18,7 @@ class Grid {
    * @param {Number | null} tileX 这个格子对应的 Tile索引
    * @param {Number | null} tileY 这个格子对应的 Tile索引
    */
-  constructor(x, y, tileX, tileY) {
+  constructor(x: number, y: number, tileX: number, tileY: number) {
     this.x = x
     this.y = y
     this.tileX = tileX
@@ -31,9 +37,9 @@ class Grid {
 // ];
 
 export class GridManager {
-  #map
-  #cols
-  #rows
+  private map: Grid[][]
+  private cols: number
+  private rows: number
 
   /**
    *
@@ -41,19 +47,19 @@ export class GridManager {
    * @param {Number} cols 一行有多少个格子
    * @param {Number} rows 一列一多少个格子
    */
-  constructor(space, cols, rows) {
+  constructor(space: number, cols: number, rows: number) {
     // 先初始化 Map
-    this.#map = []
-    this.#cols = cols
-    this.#rows = rows
+    this.map  = new Array<Array<Grid>>();
+    this.cols = cols
+    this.rows = rows
 
     for (let i = 0; i < rows; i++) {
-      let temp = []
+      const temp = []
       for (let j = 0; j < cols; j++) {
         // 初始化先赋值为 null
         temp.push(new Grid(j * space, i * space, null, null))
       }
-      this.#map.push(temp)
+      this.map.push(temp)
     }
   }
 
@@ -64,51 +70,49 @@ export class GridManager {
    * @param {Number} y 一列的第几个格子
    * @returns {Grid} 返回 Grid
    */
-  getGrid(x, y) {
-    return this.#map[x][y]
+  getGrid(x: number, y: number): Grid {
+    return this.map[x][y]
   }
 
   /**
    * @returns {Number} 返回 Cols
    */
-  getColNum() {
-    return this.#cols
+  getColNum(): number {
+    return this.cols
   }
 
   /**
    * @returns {Number} 返回 Rows
    */
-  getRowNum() {
-    return this.#rows
+  getRowNum(): number {
+    return this.rows
   }
 
   /**
    * 深拷贝数据
-   * @returns {Object} 返回克隆的 Map
+   * @returns {Grid[][]} 返回克隆的 Map
    */
-  getClone() {
-    return JSON.parse(JSON.stringify(this.#map))
+  getClone(): Grid[][] {
+    return JSON.parse(JSON.stringify(this.map))
   }
 
   /**
    * 修改当前的 Map
-   * @param {Object} newMap
+   * @param {Grid[][]} newMap
    */
-  setMap(newMap) {
-    this.#map = newMap
+  setMap(newMap: Grid[][]): void {
+    this.map = newMap
   }
 
   /**
    * 清空当前画布
    */
-  cleanMap() {
-    for (let i = 0; i < this.#map.length; i++) {
-      let temp = this.#map[i]
-      for (let j = 0; j < temp.length; j++) {
-        temp[j].tileX = null
-        temp[i].tileY = null
+  cleanMap(): void {
+    for (let i = 0; i < this.map.length; i++) {
+      for (let j = 0; j <  this.map[i].length; j++) {
+        this.map[i][j].tileX = null
+        this.map[i][j].tileY = null
       }
-      this.#map[i] = temp
     }
   }
 }

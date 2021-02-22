@@ -1,11 +1,11 @@
 /**
  * @file 笔刷工具，这里主要用来修改数据并调用渲染工具
  *
- * @author author-alsritter(alsritter1@gmail.com)
+ * @author alsritter(alsritter1@gmail.com)
  */
 
-import { GridManager } from './gridManager.js'
-import { TileManager } from './TileManager.js'
+import { GridManager } from './gridManager'
+import { TileManager } from './TileManager'
 
 export class BrushTools {
   /**
@@ -21,14 +21,14 @@ export class BrushTools {
    * @param {Number} posY 画布上的方块的索引
    */
   static singleDownBrush(
-    gridManagerArray,
-    tileManager,
-    layer,
-    tileX,
-    tileY,
-    posX,
-    posY
-  ) {
+    gridManagerArray : GridManager[],
+    tileManager : TileManager,
+    layer : number,
+    tileX : number,
+    tileY : number,
+    posX : number,
+    posY : number
+  ): void {
     if (tileManager.isEmpty(tileX,tileY)) return
 
     // 将当前选中的格子存储起来
@@ -52,23 +52,23 @@ export class BrushTools {
    * @param {Number} endPosy 画布上的方块的当前索引
    */
   static areaDownBrush(
-    gridManagerArray,
-    tileManager,
-    layer,
-    tileX,
-    tileY,
-    startPosX,
-    startPosY,
-    endPosX,
-    endPosY
-  ) {
+    gridManagerArray: GridManager[],
+    tileManager: TileManager,
+    layer: number,
+    tileX: number,
+    tileY: number,
+    startPosX: number,
+    startPosY: number,
+    endPosX: number,
+    endPosY: number
+  ): void {
 
     if (tileManager.isEmpty(tileX,tileY)) return
 
-    let maxPosX
-    let minPosX
-    let maxPosY
-    let minPosY
+    let maxPosX: number
+    let minPosX: number
+    let maxPosY: number
+    let minPosY: number
 
     if (startPosX > endPosX) {
       maxPosX = startPosX
@@ -107,14 +107,14 @@ export class BrushTools {
    * @param {Number} tileY Tile 的索引
    */
   static fillDownBrush(
-    rows,
-    cols,
-    gridManagerArray,
-    tileManager,
-    layer,
-    tileX,
-    tileY
-  ) {
+    rows: number,
+    cols: number,
+    gridManagerArray: GridManager[],
+    tileManager: TileManager,
+    layer: number,
+    tileX: number,
+    tileY: number
+  ): void {
     if (tileManager.isEmpty(tileX,tileY)) return
 
     // 将当前选中的格子存储起来
@@ -134,7 +134,7 @@ export class BrushTools {
    * @param {Number} posX 画布上的方块的索引
    * @param {Number} posY 画布上的方块的索引
    */
-  static Erase(gridManagerArray, layer, posX, posY) {
+  static Erase(gridManagerArray: GridManager[], layer: number, posX: number, posY: number): void {
     gridManagerArray[layer].getGrid(posX, posY).tileX = null
     gridManagerArray[layer].getGrid(posX, posY).tileY = null
   }
@@ -150,17 +150,17 @@ export class BrushTools {
    * @param {Number} endPosy 画布上的方块的当前索引
    */
   static areaErase(
-    gridManagerArray,
-    layer,
-    startPosX,
-    startPosY,
-    endPosX,
-    endPosY
-  ) {
-    let maxPosX
-    let minPosX
-    let maxPosY
-    let minPosY
+    gridManagerArray: GridManager[],
+    layer: number,
+    startPosX: number,
+    startPosY: number,
+    endPosX: number,
+    endPosY: number
+  ): void {
+    let maxPosX: number
+    let minPosX: number
+    let maxPosY: number
+    let minPosY: number
 
     if (startPosX > endPosX) {
       maxPosX = startPosX
