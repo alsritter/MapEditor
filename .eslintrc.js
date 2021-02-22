@@ -3,7 +3,8 @@ module.exports = {
   extends: ['plugin:@typescript-eslint/recommended'], //定义文件继承的子规范，官方推荐规则
   plugins: ['@typescript-eslint'], //定义了该eslint文件所依赖的插件
   parserOptions: {
-    project: './tsconfig.json' // 类型信息
+    project: './tsconfig.json', // 类型信息
+    extraFileExtensions: ['.html']
   },
   rules: {
     '@typescript-eslint/no-inferrable-types': 'off' // 关闭类型推断

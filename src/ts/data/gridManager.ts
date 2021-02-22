@@ -26,6 +26,18 @@ export class Grid {
   }
 }
 
+/**
+ * 出生和结束的位置
+ */
+export class StartAndEndPos {
+  start: Grid
+  end: Grid
+  constructor(start: Grid,end: Grid) {
+    this.start = start
+    this.end = end
+  }
+}
+
 // 存储的 Map 示意图
 // let map = [
 //   [ 0,  4,  8,  4,  8, 12],
@@ -49,7 +61,7 @@ export class GridManager {
    */
   constructor(space: number, cols: number, rows: number) {
     // 先初始化 Map
-    this.map  = new Array<Array<Grid>>();
+    this.map = new Array<Array<Grid>>();
     this.cols = cols
     this.rows = rows
 
@@ -109,7 +121,7 @@ export class GridManager {
    */
   cleanMap(): void {
     for (let i = 0; i < this.map.length; i++) {
-      for (let j = 0; j <  this.map[i].length; j++) {
+      for (let j = 0; j < this.map[i].length; j++) {
         this.map[i][j].tileX = null
         this.map[i][j].tileY = null
       }

@@ -11,36 +11,50 @@ class Tool {
   /**
    * 单笔刷
    */
-  static get DRAW() {
+  static get DRAW(): number {
     return 0
   }
 
   /**
    * 选区刷
    */
-  static get DRAWAREA() {
+  static get DRAWAREA(): number {
     return 1
   }
 
   /**
    * 油漆桶
    */
-  static get FILL() {
+  static get FILL(): number {
     return 2
   }
 
   /**
    * 橡皮擦
    */
-  static get ERASE() {
+  static get ERASE(): number {
     return 3
   }
 
   /**
    * 选区擦
    */
-  static get ERASEAREA() {
+  static get ERASEAREA(): number {
     return 4
+  }
+
+  /**
+   * 出生点
+   */
+  static get Start(): number {
+    return 5
+  }
+
+  /**
+   * 终点
+   */
+  static get END(): number {
+    return 6
   }
 
   /**
@@ -59,6 +73,10 @@ class Tool {
         return Tool.ERASE
       case 4:
         return Tool.ERASEAREA
+      case 5:
+        return Tool.Start
+      case 6:
+        return Tool.END
       default:
         return Tool.DRAW
     }

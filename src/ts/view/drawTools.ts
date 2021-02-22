@@ -68,6 +68,29 @@ export class DrawTools {
   }
 
   /**
+   * 让指定的位置变成指定的颜色
+   *
+   * @param {CanvasRenderingContext2D} ctx 传入 canvas 的 Context
+   * @param {Number} space 一个格子的大小
+   * @param {Number} x 绘制目的地的 x
+   * @param {Number} y 绘制目的地的 y
+   * @param {String} color 指定的颜色
+   */
+  static drawColor(
+    ctx: CanvasRenderingContext2D,
+    space: number,
+    x: number,
+    y: number,
+    color: string
+  ): void {
+    ctx.fillStyle = color
+    ctx.beginPath()
+    ctx.rect(x, y, space, space)
+    ctx.fill()
+    ctx.closePath()
+  }
+
+  /**
    * 在指定位置绘制一个 Tile 注意这个 X Y 是以这个 ctx 为原点的
    *
    * @param {CanvasRenderingContext2D} ctx 传入 canvas 的 Context

@@ -1,7 +1,6 @@
-import { getMapData } from './canvasController'
+import { getMapData, getStartAndEndPos } from './canvasController'
 
 class Pos {
-
   tileX: number
   tileY: number
 
@@ -15,7 +14,9 @@ class Pos {
  * 输出的结构应该是由全部所使用到的图块数据，以及下面几层都是引用这个图块的索引
  */
 export function exportData(): void {
-  const exportButton = document.getElementById('exportData') as HTMLButtonElement
+  const exportButton = document.getElementById(
+    'exportData'
+  ) as HTMLButtonElement
   exportButton.onclick = () => {
     const maps = getMapData()
 
@@ -31,16 +32,15 @@ export function exportData(): void {
       const tempMap = maps[i].getClone()
 
       const y_map: number[][] = []
-      // 这里两层 for 是遍历 Map 取得数据 
+      // 这里两层 for 是遍历 Map 取得数据
       for (let j = 0; j < tempMap.length; j++) {
-
         const x_map: number[] = []
 
         for (let k = 0; k < tempMap[j].length; k++) {
-
-          tempMap[j][k].tileX = tempMap[j][k].tileX == null ? 0 : tempMap[j][k].tileX
-          tempMap[j][k].tileY = tempMap[j][k].tileY == null ? 0 : tempMap[j][k].tileY
-
+          tempMap[j][k].tileX =
+            tempMap[j][k].tileX == null ? 0 : tempMap[j][k].tileX
+          tempMap[j][k].tileY =
+            tempMap[j][k].tileY == null ? 0 : tempMap[j][k].tileY
 
           // 标识图块索引
           let p_temp = 0
@@ -72,6 +72,14 @@ export function exportData(): void {
     }
 
     const data = {
+      start: {
+        x: getStartAndEndPos().start.x,
+        y: getStartAndEndPos().start.y
+      },
+      end: {
+        x: getStartAndEndPos().end.x,
+        y: getStartAndEndPos().end.y
+      },
       sprites: spritePos,
       background: layerData[0],
       collision: layerData[1],

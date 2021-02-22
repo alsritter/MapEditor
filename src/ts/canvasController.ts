@@ -6,7 +6,7 @@
  */
 
 import { DrawTools } from './view/drawTools'
-import { Grid, GridManager } from './data/gridManager'
+import { Grid, GridManager, StartAndEndPos } from './data/gridManager'
 import { getTileIndex, getTileManage } from './tileController'
 import { RendererTools } from './view/renderer'
 import { BrushTools } from './data/brushTools'
@@ -15,12 +15,21 @@ import { MapStack } from './data/mapStack'
 
 // 将这个提取为全局的（核心的地图数据）
 const gridManagerArray: GridManager[] = new Array<GridManager>()
+// 记录出生点和终点的位置
+const startAndEndPos: StartAndEndPos = new StartAndEndPos(new Grid(0, 0, 0, 0), new Grid(0, 0, 0, 0))
 
 /**
  * @returns {GridManager[]} 返回 Map
  */
 export function getMapData(): GridManager[] {
   return gridManagerArray
+}
+
+/**
+ * @returns {StartAndEndPos} 返回 出生位置和终点位置
+ */
+export function getStartAndEndPos(): StartAndEndPos {
+  return startAndEndPos
 }
 
 export function drawCanvas(): void {
@@ -48,12 +57,10 @@ export function drawCanvas(): void {
 
   // 使用的工具
   toolType.onchange = () => {
-    console.log(toolType.options[toolType.selectedIndex].text)
     currentTool = Tool.returnToolType(toolType.selectedIndex)
   }
 
   layer.onchange = () => {
-    console.log(layer.options[layer.selectedIndex].text)
     currentLayer = layer.selectedIndex
   }
 
@@ -85,8 +92,7 @@ export function drawCanvas(): void {
   // 改变了显示模式也需要刷新
   showType.onclick = (e) => {
     if ((e.target as HTMLInputElement).tagName == 'INPUT') {
-      isShowAll = (e.target as HTMLInputElement).value== '0'
-      console.log(isShowAll)
+      isShowAll = (e.target as HTMLInputElement).value == '0'
 
       RendererTools.refresh(
         ctx,
@@ -97,7 +103,8 @@ export function drawCanvas(): void {
         gridManagerArray,
         currentLayer,
         isShowAll,
-        getTileManage()
+        getTileManage(),
+        startAndEndPos
       )
     }
   }
@@ -120,9 +127,9 @@ export function drawCanvas(): void {
       gridManagerArray,
       currentLayer,
       isShowAll,
-      getTileManage()
+      getTileManage(),
+      startAndEndPos
     )
-    console.log('清空当前图层')
   }
 
   // 监听撤回键（使用栈）
@@ -133,7 +140,6 @@ export function drawCanvas(): void {
         // 弹栈
         const temp = tempMap.pop()
         gridManagerArray[temp.layer].setMap(temp.map)
-        console.log(tempMap.size())
 
         RendererTools.refresh(
           ctx,
@@ -144,9 +150,9 @@ export function drawCanvas(): void {
           gridManagerArray,
           currentLayer,
           isShowAll,
-          getTileManage()
+          getTileManage(),
+          startAndEndPos
         )
-        console.log('撤回')
       }
     }
   }
@@ -198,6 +204,12 @@ export function drawCanvas(): void {
       case Tool.ERASE:
         BrushTools.Erase(gridManagerArray, currentLayer, tempX, tempY)
         break
+      case Tool.Start:
+        BrushTools.setStartPosition(tempX, tempY, startAndEndPos);
+        break
+      case Tool.END:
+        BrushTools.setEndPosition(tempX, tempY, startAndEndPos);
+        break
     }
     // 因为橡皮擦不显示 Tile，只显示阴影，所以需要单独拿出来
     if (currentTool == Tool.ERASE) {
@@ -213,7 +225,8 @@ export function drawCanvas(): void {
         isShowAll,
         getTileManage(),
         tempX,
-        tempY
+        tempY,
+        startAndEndPos
       )
     } else {
       // 单笔刷未点击时的绘制
@@ -230,7 +243,8 @@ export function drawCanvas(): void {
         getTileIndex().x,
         getTileIndex().y,
         tempX,
-        tempY
+        tempY,
+        startAndEndPos
       )
     }
   }
@@ -325,7 +339,8 @@ export function drawCanvas(): void {
           isShowAll,
           getTileManage(),
           tempX,
-          tempY
+          tempY,
+          startAndEndPos
         )
       } else {
         // 单笔刷未点击时的绘制
@@ -342,7 +357,8 @@ export function drawCanvas(): void {
           getTileIndex().x,
           getTileIndex().y,
           tempX,
-          tempY
+          tempY,
+          startAndEndPos
         )
       }
     }
