@@ -18,6 +18,7 @@ export function exportData() {
     let layerData = []
 
     // 存储用到了哪些图块，方便 Unity 一开始就生成好对应的 Sprite
+    // TODO: 注意！！第一个格子是空子，Unity 读取它的时候需要忽略第一个格子
     let spritePos = [new Pos(0, 0)] // 默认创建一个
 
     // 第一层遍历是取得各个图层的数据
