@@ -46,7 +46,7 @@ class Tool {
   /**
    * 出生点
    */
-  static get Start(): number {
+  static get START(): number {
     return 5
   }
 
@@ -74,7 +74,7 @@ class Tool {
       case 4:
         return Tool.ERASEAREA
       case 5:
-        return Tool.Start
+        return Tool.START
       case 6:
         return Tool.END
       default:

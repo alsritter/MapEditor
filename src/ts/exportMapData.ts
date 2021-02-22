@@ -1,3 +1,9 @@
+/**
+ * @file 用于导出数据
+ *
+ * @author alsritter(alsritter1@gmail.com)
+ */
+
 import { getMapData, getStartAndEndPos } from './canvasController'
 
 class Pos {

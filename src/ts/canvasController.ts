@@ -12,11 +12,15 @@ import { RendererTools } from './view/renderer'
 import { BrushTools } from './data/brushTools'
 import { Tool } from './data/enumType'
 import { MapStack } from './data/mapStack'
+import { CacheMap } from './data/cacheMap'
 
 // 将这个提取为全局的（核心的地图数据）
 const gridManagerArray: GridManager[] = new Array<GridManager>()
 // 记录出生点和终点的位置
-const startAndEndPos: StartAndEndPos = new StartAndEndPos(new Grid(0, 0, 0, 0), new Grid(0, 0, 0, 0))
+const startAndEndPos: StartAndEndPos = new StartAndEndPos(
+  new Grid(0, 0, 0, 0),
+  new Grid(0, 0, 0, 0)
+)
 
 /**
  * @returns {GridManager[]} 返回 Map
@@ -42,7 +46,9 @@ export function drawCanvas(): void {
   // 显示模式
   const showType = document.getElementById('showType') as HTMLDivElement
   // 清空画布
-  const cleanButton = document.getElementById('clearCanvas') as HTMLButtonElement
+  const cleanButton = document.getElementById(
+    'clearCanvas'
+  ) as HTMLButtonElement
 
   // 设置网格的行列
   const _gridColSize = 50
@@ -60,14 +66,15 @@ export function drawCanvas(): void {
     currentTool = Tool.returnToolType(toolType.selectedIndex)
   }
 
-  layer.onchange = () => {
-    currentLayer = layer.selectedIndex
-  }
+
 
   // 这里实例化图层数量个 GridManager
   for (let i = 0; i < layer.options.length; i++) {
     gridManagerArray.push(new GridManager(_space, _gridColSize, _gridRowSize))
   }
+
+  // 初始化缓存
+  const cacheMap: CacheMap = new CacheMap(_gridColSize, _gridRowSize)
 
   const ctx = canvas.getContext('2d')
 
@@ -93,7 +100,7 @@ export function drawCanvas(): void {
   showType.onclick = (e) => {
     if ((e.target as HTMLInputElement).tagName == 'INPUT') {
       isShowAll = (e.target as HTMLInputElement).value == '0'
-
+      cacheMap.setAllChange() // 缓存也要全部变更
       RendererTools.refresh(
         ctx,
         canvas,
@@ -104,9 +111,30 @@ export function drawCanvas(): void {
         currentLayer,
         isShowAll,
         getTileManage(),
-        startAndEndPos
+        startAndEndPos,
+        cacheMap
       )
     }
+  }
+
+  // 更改图层
+  layer.onchange = () => {
+    currentLayer = layer.selectedIndex
+    // 变更了层也需要清空缓存刷新
+    cacheMap.setAllChange()
+    RendererTools.refresh(
+      ctx,
+      canvas,
+      _space,
+      _gridRowSize,
+      _gridColSize,
+      gridManagerArray,
+      currentLayer,
+      isShowAll,
+      getTileManage(),
+      startAndEndPos,
+      cacheMap
+    )
   }
 
   // 监听清空画布
@@ -118,6 +146,7 @@ export function drawCanvas(): void {
     })
 
     gridManagerArray[currentLayer].cleanMap()
+    cacheMap.setAllChange() // 缓存也要全部变更
     RendererTools.refresh(
       ctx,
       canvas,
@@ -128,7 +157,8 @@ export function drawCanvas(): void {
       currentLayer,
       isShowAll,
       getTileManage(),
-      startAndEndPos
+      startAndEndPos,
+      cacheMap
     )
   }
 
@@ -151,7 +181,8 @@ export function drawCanvas(): void {
           currentLayer,
           isShowAll,
           getTileManage(),
-          startAndEndPos
+          startAndEndPos,
+          cacheMap
         )
       }
     }
@@ -185,7 +216,8 @@ export function drawCanvas(): void {
           getTileIndex().x,
           getTileIndex().y,
           tempX,
-          tempY
+          tempY,
+          cacheMap
         )
         break
       // 油漆桶
@@ -197,22 +229,27 @@ export function drawCanvas(): void {
           getTileManage(),
           currentLayer,
           getTileIndex().x,
-          getTileIndex().y
+          getTileIndex().y,
+          cacheMap
         )
         break
       // 橡皮擦
       case Tool.ERASE:
-        BrushTools.Erase(gridManagerArray, currentLayer, tempX, tempY)
+        BrushTools.Erase(gridManagerArray, currentLayer, tempX, tempY, cacheMap)
         break
-      case Tool.Start:
-        BrushTools.setStartPosition(tempX, tempY, startAndEndPos);
+      case Tool.START:
+        BrushTools.setStartPosition(tempX, tempY, startAndEndPos, cacheMap)
         break
       case Tool.END:
-        BrushTools.setEndPosition(tempX, tempY, startAndEndPos);
+        BrushTools.setEndPosition(tempX, tempY, startAndEndPos, cacheMap)
         break
     }
-    // 因为橡皮擦不显示 Tile，只显示阴影，所以需要单独拿出来
-    if (currentTool == Tool.ERASE) {
+    // 因为橡皮擦、出生点和终点不显示 Tile，只显示阴影，所以需要单独拿出来
+    if (
+      currentTool == Tool.ERASE ||
+      currentTool == Tool.START ||
+      currentTool == Tool.END
+    ) {
       // 刷新画布
       RendererTools.refreshAndShowDark(
         ctx,
@@ -226,7 +263,8 @@ export function drawCanvas(): void {
         getTileManage(),
         tempX,
         tempY,
-        startAndEndPos
+        startAndEndPos,
+        cacheMap
       )
     } else {
       // 单笔刷未点击时的绘制
@@ -244,7 +282,8 @@ export function drawCanvas(): void {
         getTileIndex().y,
         tempX,
         tempY,
-        startAndEndPos
+        startAndEndPos,
+        cacheMap
       )
     }
   }
@@ -290,7 +329,8 @@ export function drawCanvas(): void {
               getTileIndex().x,
               getTileIndex().y,
               tempX,
-              tempY
+              tempY,
+              cacheMap
             )
             break
           // 如果是选区笔刷
@@ -304,12 +344,19 @@ export function drawCanvas(): void {
               downPosition.x,
               downPosition.y,
               tempX,
-              tempY
+              tempY,
+              cacheMap
             )
             break
           // 橡皮擦
           case Tool.ERASE:
-            BrushTools.Erase(gridManagerArray, currentLayer, tempX, tempY)
+            BrushTools.Erase(
+              gridManagerArray,
+              currentLayer,
+              tempX,
+              tempY,
+              cacheMap
+            )
             break
           // 选区橡皮擦
           case Tool.ERASEAREA:
@@ -319,7 +366,8 @@ export function drawCanvas(): void {
               downPosition.x,
               downPosition.y,
               tempX,
-              tempY
+              tempY,
+              cacheMap
             )
             break
         }
@@ -340,7 +388,8 @@ export function drawCanvas(): void {
           getTileManage(),
           tempX,
           tempY,
-          startAndEndPos
+          startAndEndPos,
+          cacheMap
         )
       } else {
         // 单笔刷未点击时的绘制
@@ -358,7 +407,8 @@ export function drawCanvas(): void {
           getTileIndex().y,
           tempX,
           tempY,
-          startAndEndPos
+          startAndEndPos,
+          cacheMap
         )
       }
     }

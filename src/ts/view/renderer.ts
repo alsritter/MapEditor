@@ -7,6 +7,7 @@
 import { TileManager } from '../data/TileManager'
 import { GridManager, StartAndEndPos } from '../data/gridManager'
 import { DrawTools } from './drawTools'
+import { CacheMap, ModifiedPos } from '../data/cacheMap'
 
 export class RendererTools {
   /**
@@ -32,6 +33,8 @@ export class RendererTools {
 
     // 绘制终点
     DrawTools.drawColor(ctx, space, e_x, e_y, 'rgba(0, 122, 204, 0.5)')
+
+
   }
 
   /**
@@ -47,6 +50,7 @@ export class RendererTools {
    * @param {Boolean} showAll 是否显示全部图层，true 表示是
    * @param {TileManager} tileManager
    * @param {StartAndEndPos} flag 起点和终点的位置
+   * @param {CacheMap} cacheMap 缓存表标识哪块地方发生的变化
    */
   static refresh(
     ctx: CanvasRenderingContext2D,
@@ -58,21 +62,52 @@ export class RendererTools {
     layer: number,
     showAll: boolean,
     tileManager: TileManager,
-    flag: StartAndEndPos
+    flag: StartAndEndPos,
+    cacheMap: CacheMap
   ): void {
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    // 局部刷新
+    const modif = cacheMap.getChange()
+
     DrawTools.drawGrid(ctx, space, canvas.width, space * rows, cols, rows)
 
-    // 如果显示全部图层则，遍历刷新
-    if (showAll) {
-      for (let i = 0; i < gridManagerArray.length; i++) {
+    for (let i = 0; i < modif.length; i++) {
+      // 先清空指定的位置
+      DrawTools.clearTile(
+        ctx,
+        space,
+        gridManagerArray[layer].getGrid(modif[i].x, modif[i].y).x,
+        gridManagerArray[layer].getGrid(modif[i].x, modif[i].y).y
+      )
+
+      // 如果显示全部图层则，遍历刷新每一层的这个位置
+      if (showAll) {
+        for (let j = 0; j < gridManagerArray.length; j++) {
+          RendererTools.changeTile(
+            gridManagerArray,
+            j,
+            modif,
+            i,
+            tileManager,
+            ctx,
+            space
+          )
+        }
+      } else {
         // 绘制 Map 里面已有的 Tile
-        DrawTools.drawMapTile(ctx, tileManager, gridManagerArray[i], space)
+        RendererTools.changeTile(
+          gridManagerArray,
+          layer,
+          modif,
+          i,
+          tileManager,
+          ctx,
+          space
+        )
       }
-    } else {
-      // 绘制 Map 里面已有的 Tile
-      DrawTools.drawMapTile(ctx, tileManager, gridManagerArray[layer], space)
     }
+
+    // 更新完成后要归零
+    cacheMap.cleanChange()
 
     RendererTools.drawStartAndEnd(
       ctx,
@@ -80,8 +115,51 @@ export class RendererTools {
       gridManagerArray[0].getGrid(flag.start.x, flag.start.y).x,
       gridManagerArray[0].getGrid(flag.start.x, flag.start.y).y,
       gridManagerArray[0].getGrid(flag.end.x, flag.end.y).x,
-      gridManagerArray[0].getGrid(flag.end.x, flag.end.y).y,
+      gridManagerArray[0].getGrid(flag.end.x, flag.end.y).y
     )
+  }
+
+  /**
+   * 修改指定位置的 Tile
+   * @param gridManagerArray
+   * @param layer
+   * @param modif
+   * @param index
+   * @param tileManager
+   * @param ctx
+   * @param space
+   */
+  private static changeTile(
+    gridManagerArray: GridManager[],
+    layer: number,
+    modif: ModifiedPos[],
+    index: number,
+    tileManager: TileManager,
+    ctx: CanvasRenderingContext2D,
+    space: number
+  ): void {
+    // 如果还是 null 或者为空的则直接跳过
+    if (
+      gridManagerArray[layer].getGrid(modif[index].x, modif[index].y).tileX !=
+        null &&
+      gridManagerArray[layer].getGrid(modif[index].x, modif[index].y).tileY !=
+        null &&
+      !DrawTools.isEmpty(
+        tileManager,
+        gridManagerArray[layer].getGrid(modif[index].x, modif[index].y).tileX,
+        gridManagerArray[layer].getGrid(modif[index].x, modif[index].y).tileY
+      ) // 这个判断得放在后面
+    ) {
+      DrawTools.drawTile(
+        ctx,
+        tileManager,
+        gridManagerArray[layer].getGrid(modif[index].x, modif[index].y).tileX,
+        gridManagerArray[layer].getGrid(modif[index].x, modif[index].y).tileY,
+        space,
+        gridManagerArray[layer].getGrid(modif[index].x, modif[index].y).x,
+        gridManagerArray[layer].getGrid(modif[index].x, modif[index].y).y
+      )
+    }
   }
 
   /**
@@ -101,6 +179,7 @@ export class RendererTools {
    * @param {Number} posX 画布上的方块的索引
    * @param {Number} posY 画布上的方块的索引
    * @param {StartAndEndPos} flag 起点和终点的位置
+   * @param {CacheMap} cacheMap 缓存表标识哪块地方发生的变化
    */
   static refreshAndShowTile(
     ctx: CanvasRenderingContext2D,
@@ -116,21 +195,22 @@ export class RendererTools {
     tileY: number,
     posX: number,
     posY: number,
-    flag: StartAndEndPos
+    flag: StartAndEndPos,
+    cacheMap: CacheMap
   ): void {
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-    DrawTools.drawGrid(ctx, space, canvas.width, space * rows, cols, rows)
-
-    // 如果显示全部图层则，遍历刷新
-    if (showAll) {
-      for (let i = 0; i < gridManagerArray.length; i++) {
-        // 绘制 Map 里面已有的 Tile
-        DrawTools.drawMapTile(ctx, tileManager, gridManagerArray[i], space)
-      }
-    } else {
-      // 绘制 Map 里面已有的 Tile
-      DrawTools.drawMapTile(ctx, tileManager, gridManagerArray[layer], space)
-    }
+    RendererTools.refresh(
+      ctx,
+      canvas,
+      space,
+      rows,
+      cols,
+      gridManagerArray,
+      layer,
+      showAll,
+      tileManager,
+      flag,
+      cacheMap
+    )
 
     // 显示当前选中的 Tile
     DrawTools.drawTile(
@@ -143,15 +223,6 @@ export class RendererTools {
       gridManagerArray[layer].getGrid(posX, posY).y
     )
 
-    RendererTools.drawStartAndEnd(
-      ctx,
-      space,
-      gridManagerArray[0].getGrid(flag.start.x, flag.start.y).x,
-      gridManagerArray[0].getGrid(flag.start.x, flag.start.y).y,
-      gridManagerArray[0].getGrid(flag.end.x, flag.end.y).x,
-      gridManagerArray[0].getGrid(flag.end.x, flag.end.y).y,
-    )
-
     // 绘制阴影
     DrawTools.drawDark(
       ctx,
@@ -159,6 +230,9 @@ export class RendererTools {
       gridManagerArray[layer].getGrid(posX, posY).x,
       gridManagerArray[layer].getGrid(posX, posY).y
     )
+
+    // 绘制阴影也需要更新 cache
+    cacheMap.setChange(posX, posY)
   }
 
   /**
@@ -178,6 +252,7 @@ export class RendererTools {
    * @param {Number} posX 画布上的方块的索引
    * @param {Number} posY 画布上的方块的索引
    * @param {StartAndEndPos} flag 起点和终点的位置
+   * @param {CacheMap} cacheMap 缓存表标识哪块地方发生的变化
    */
   static refreshAndShowDark(
     ctx: CanvasRenderingContext2D,
@@ -191,29 +266,21 @@ export class RendererTools {
     tileManager: TileManager,
     posX: number,
     posY: number,
-    flag: StartAndEndPos
+    flag: StartAndEndPos,
+    cacheMap: CacheMap
   ): void {
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-    DrawTools.drawGrid(ctx, space, canvas.width, space * rows, cols, rows)
-
-    // 如果显示全部图层则，遍历刷新
-    if (showAll) {
-      for (let i = 0; i < gridManagerArray.length; i++) {
-        // 绘制 Map 里面已有的 Tile
-        DrawTools.drawMapTile(ctx, tileManager, gridManagerArray[i], space)
-      }
-    } else {
-      // 绘制 Map 里面已有的 Tile
-      DrawTools.drawMapTile(ctx, tileManager, gridManagerArray[layer], space)
-    }
-
-    RendererTools.drawStartAndEnd(
+    RendererTools.refresh(
       ctx,
+      canvas,
       space,
-      gridManagerArray[0].getGrid(flag.start.x, flag.start.y).x,
-      gridManagerArray[0].getGrid(flag.start.x, flag.start.y).y,
-      gridManagerArray[0].getGrid(flag.end.x, flag.end.y).x,
-      gridManagerArray[0].getGrid(flag.end.x, flag.end.y).y,
+      rows,
+      cols,
+      gridManagerArray,
+      layer,
+      showAll,
+      tileManager,
+      flag,
+      cacheMap
     )
 
     // 绘制阴影
@@ -223,5 +290,8 @@ export class RendererTools {
       gridManagerArray[layer].getGrid(posX, posY).x,
       gridManagerArray[layer].getGrid(posX, posY).y
     )
+
+    // 绘制阴影也需要更新 cache
+    cacheMap.setChange(posX, posY)
   }
 }

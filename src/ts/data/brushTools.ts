@@ -6,23 +6,30 @@
 
 import { GridManager, StartAndEndPos } from './gridManager'
 import { TileManager } from './TileManager'
+import { CacheMap } from './cacheMap'
 
 export class BrushTools {
-
   /**
    * 设置出生点的位置
    *
    * @param {Number} posX 画布上的方块的索引（注意只是索引，并不是坐标）
    * @param {Number} posY 画布上的方块的索引
    * @param {StartAndEndPos} flag 出生点
+   * @param {CacheMap} cacheMap 缓存表标识哪块地方发生的变化
    */
   static setStartPosition(
     posX: number,
     posY: number,
-    flag: StartAndEndPos
+    flag: StartAndEndPos,
+    cacheMap: CacheMap
   ): void {
     flag.start.x = posX
     flag.start.y = posY
+
+    // 这个设置一个点的比较特殊，需要更新全部（因为这个点完后，之前位置的颜色就没了）
+
+    // cacheMap.setChange(posX, posY)
+    cacheMap.setAllChange()
   }
 
   /**
@@ -31,14 +38,18 @@ export class BrushTools {
    * @param {Number} posX 画布上的方块的索引
    * @param {Number} posY 画布上的方块的索引
    * @param {StartAndEndPos} flag 结束点
+   * @param {CacheMap} cacheMap 缓存表标识哪块地方发生的变化
    */
   static setEndPosition(
     posX: number,
     posY: number,
-    flag: StartAndEndPos
+    flag: StartAndEndPos,
+    cacheMap: CacheMap
   ): void {
     flag.end.x = posX
     flag.end.y = posY
+
+    cacheMap.setAllChange()
   }
 
   /**
@@ -52,6 +63,7 @@ export class BrushTools {
    * @param {Number} tileY Tile 的索引
    * @param {Number} posX 画布上的方块的索引
    * @param {Number} posY 画布上的方块的索引
+   * @param {CacheMap} cacheMap 缓存表标识哪块地方发生的变化
    */
   static singleDownBrush(
     gridManagerArray: GridManager[],
@@ -60,13 +72,17 @@ export class BrushTools {
     tileX: number,
     tileY: number,
     posX: number,
-    posY: number
+    posY: number,
+    cacheMap: CacheMap
   ): void {
     if (tileManager.isEmpty(tileX, tileY)) return
 
     // 将当前选中的格子存储起来
     gridManagerArray[layer].getGrid(posX, posY).tileX = tileX
     gridManagerArray[layer].getGrid(posX, posY).tileY = tileY
+
+    // 同时通知 cacheMap 更新
+    cacheMap.setChange(posX, posY)
   }
 
   /**
@@ -83,6 +99,7 @@ export class BrushTools {
    * @param {Number} startPosY 画布上的方块的起点索引
    * @param {Number} endPosX 画布上的方块的当前索引
    * @param {Number} endPosy 画布上的方块的当前索引
+   * @param {CacheMap} cacheMap 缓存表标识哪块地方发生的变化
    */
   static areaDownBrush(
     gridManagerArray: GridManager[],
@@ -93,9 +110,9 @@ export class BrushTools {
     startPosX: number,
     startPosY: number,
     endPosX: number,
-    endPosY: number
+    endPosY: number,
+    cacheMap: CacheMap
   ): void {
-
     if (tileManager.isEmpty(tileX, tileY)) return
 
     let maxPosX: number
@@ -124,6 +141,8 @@ export class BrushTools {
       for (let j = minPosY; j <= maxPosY; j++) {
         gridManagerArray[layer].getGrid(i, j).tileX = tileX
         gridManagerArray[layer].getGrid(i, j).tileY = tileY
+        // 同时通知 cacheMap 更新
+        cacheMap.setChange(i, j)
       }
     }
   }
@@ -138,6 +157,7 @@ export class BrushTools {
    * @param {Number} layer 当前选中的图层
    * @param {Number} tileX Tile 的索引
    * @param {Number} tileY Tile 的索引
+   * @param {CacheMap} cacheMap 缓存表标识哪块地方发生的变化
    */
   static fillDownBrush(
     rows: number,
@@ -146,7 +166,8 @@ export class BrushTools {
     tileManager: TileManager,
     layer: number,
     tileX: number,
-    tileY: number
+    tileY: number,
+    cacheMap: CacheMap
   ): void {
     if (tileManager.isEmpty(tileX, tileY)) return
 
@@ -155,6 +176,8 @@ export class BrushTools {
       for (let j = 0; j < cols; j++) {
         gridManagerArray[layer].getGrid(i, j).tileX = tileX
         gridManagerArray[layer].getGrid(i, j).tileY = tileY
+        // 同时通知 cacheMap 更新
+        cacheMap.setChange(i, j)
       }
     }
   }
@@ -166,10 +189,19 @@ export class BrushTools {
    * @param {Number} layer 当前选中的图层
    * @param {Number} posX 画布上的方块的索引
    * @param {Number} posY 画布上的方块的索引
+   * @param {CacheMap} cacheMap 缓存表标识哪块地方发生的变化
    */
-  static Erase(gridManagerArray: GridManager[], layer: number, posX: number, posY: number): void {
+  static Erase(
+    gridManagerArray: GridManager[],
+    layer: number,
+    posX: number,
+    posY: number,
+    cacheMap: CacheMap
+  ): void {
     gridManagerArray[layer].getGrid(posX, posY).tileX = null
     gridManagerArray[layer].getGrid(posX, posY).tileY = null
+    // 同时通知 cacheMap 更新
+    cacheMap.setChange(posX, posY)
   }
 
   /**
@@ -181,6 +213,7 @@ export class BrushTools {
    * @param {Number} startPosY 画布上的方块的起点索引
    * @param {Number} endPosX 画布上的方块的当前索引
    * @param {Number} endPosy 画布上的方块的当前索引
+   * @param {CacheMap} cacheMap 缓存表标识哪块地方发生的变化
    */
   static areaErase(
     gridManagerArray: GridManager[],
@@ -188,7 +221,8 @@ export class BrushTools {
     startPosX: number,
     startPosY: number,
     endPosX: number,
-    endPosY: number
+    endPosY: number,
+    cacheMap: CacheMap
   ): void {
     let maxPosX: number
     let minPosX: number
@@ -216,6 +250,8 @@ export class BrushTools {
       for (let j = minPosY; j <= maxPosY; j++) {
         gridManagerArray[layer].getGrid(i, j).tileX = null
         gridManagerArray[layer].getGrid(i, j).tileY = null
+        // 同时通知 cacheMap 更新
+        cacheMap.setChange(i, j)
       }
     }
   }

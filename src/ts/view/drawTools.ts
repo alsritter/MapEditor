@@ -91,6 +91,23 @@ export class DrawTools {
   }
 
   /**
+   * 清空指定位置的格子
+   *
+   * @param {CanvasRenderingContext2D} ctx 传入 canvas 的 Context
+   * @param {Number} space 一个格子的大小
+   * @param {Number} x 绘制目的地的 x
+   * @param {Number} y 绘制目的地的 y
+   */
+  static clearTile(
+    ctx: CanvasRenderingContext2D,
+    space: number,
+    x: number,
+    y: number
+  ): void {
+    ctx.clearRect(x, y, space, space)
+  }
+
+  /**
    * 在指定位置绘制一个 Tile 注意这个 X Y 是以这个 ctx 为原点的
    *
    * @param {CanvasRenderingContext2D} ctx 传入 canvas 的 Context
@@ -153,46 +170,6 @@ export class DrawTools {
   }
 
   /**
-   * 绘制 pos 里面存储的 Tile
-   *
-   * @param {CanvasRenderingContext2D} ctx 传入 canvas 的 Context
-   * @param {TileManager} map 传入 TileManager
-   * @param {GridManager} pos 传入 位置列表
-   * @param {Number} space 一个格子的大小
-   */
-  static drawMapTile(
-    ctx: CanvasRenderingContext2D,
-    map: TileManager,
-    pos: GridManager,
-    space: number
-  ): void {
-    for (let i = 0; i < pos.getRowNum(); i++) {
-      for (let j = 0; j < pos.getColNum(); j++) {
-        // 如果还是 null 或者为空的则直接跳过
-        if (
-          pos.getGrid(i, j).tileX != null &&
-          pos.getGrid(i, j).tileY != null &&
-          !DrawTools.isEmpty(
-            map,
-            pos.getGrid(i, j).tileX,
-            pos.getGrid(i, j).tileY
-          ) // 这个判断得放在后面
-        ) {
-          DrawTools.drawTile(
-            ctx,
-            map,
-            pos.getGrid(i, j).tileX,
-            pos.getGrid(i, j).tileY,
-            space,
-            pos.getGrid(i, j).x,
-            pos.getGrid(i, j).y
-          )
-        }
-      }
-    }
-  }
-
-  /**
    * 判度当前位置上的图片是否是空的
    * @param {TileManager} map
    * @param {Number} tileX
@@ -211,7 +188,12 @@ export class DrawTools {
    * @param {GridManager} pos 传入 位置列表
    * @param {Number} space 一个格子的大小
    */
-  static drawAllTile(ctx: CanvasRenderingContext2D, map: TileManager, pos: GridManager, space: number): void {
+  static drawAllTile(
+    ctx: CanvasRenderingContext2D,
+    map: TileManager,
+    pos: GridManager,
+    space: number
+  ): void {
     for (let i = 0; i < map.getCols(); i++) {
       for (let j = 0; j < map.getRows(); j++) {
         DrawTools.drawTile(
