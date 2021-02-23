@@ -5,28 +5,45 @@
  * @author alsritter(alsritter1@gmail.com)
  */
 
-import { DrawTools } from './view/drawTools'
-import { Grid, GridManager, StartAndEndPos } from './data/gridManager'
+import DrawTools from './view/drawTools'
+import GridManager from './data/gridManager'
 import { getTileIndex, getTileManage } from './tileController'
-import { RendererTools } from './view/renderer'
-import { BrushTools } from './data/brushTools'
-import { Tool } from './data/enumType'
-import { MapStack } from './data/mapStack'
-import { CacheMap } from './data/cacheMap'
+import RendererTools from './view/renderer'
+import BrushTools from './data/brushTools'
+import Tool from './data/enumType'
+import MapStack from './data/mapStack'
+import CacheMap from './data/cacheMap'
+import StartAndEndPos from './data/VO/StartAndEndPos'
+import Grid from './data/VO/Grid'
 
 // 将这个提取为全局的（核心的地图数据）
-const gridManagerArray: GridManager[] = new Array<GridManager>()
+let gridManagerArray: GridManager[] = new Array<GridManager>()
 // 记录出生点和终点的位置
-const startAndEndPos: StartAndEndPos = new StartAndEndPos(
+let startAndEndPos: StartAndEndPos = new StartAndEndPos(
   new Grid(0, 0, 0, 0),
   new Grid(0, 0, 0, 0)
 )
+
+// 定义一个事件来通知刷新地图
+const refreshEvent = new CustomEvent('refreshData')
 
 /**
  * @returns {GridManager[]} 返回 Map
  */
 export function getMapData(): GridManager[] {
   return gridManagerArray
+}
+
+/**
+ * 设置当前 map 为新的 map数据
+ *
+ * @param newMap
+ * @param newSA
+ */
+export function setMapData(newMap: GridManager[], newSA: StartAndEndPos): void {
+  gridManagerArray = newMap
+  startAndEndPos = newSA
+  window.dispatchEvent(refreshEvent) // 通知更新数据
 }
 
 /**
@@ -94,56 +111,8 @@ export function drawCanvas(): void {
   // 记录绘图前的数据，方便撤回
   const tempMap = new MapStack()
 
-  // 改变了显示模式也需要刷新
-  showType.onclick = (e) => {
-    if ((e.target as HTMLInputElement).tagName == 'INPUT') {
-      isShowAll = (e.target as HTMLInputElement).value == '0'
-      cacheMap.setAllChange() // 缓存也要全部变更
-      RendererTools.refresh(
-        ctx,
-        canvas,
-        _space,
-        _gridRowSize,
-        _gridColSize,
-        gridManagerArray,
-        currentLayer,
-        isShowAll,
-        getTileManage(),
-        startAndEndPos,
-        cacheMap
-      )
-    }
-  }
-
-  // 更改图层
-  layer.onchange = () => {
-    currentLayer = layer.selectedIndex
-    // 变更了层也需要清空缓存刷新
-    cacheMap.setAllChange()
-    RendererTools.refresh(
-      ctx,
-      canvas,
-      _space,
-      _gridRowSize,
-      _gridColSize,
-      gridManagerArray,
-      currentLayer,
-      isShowAll,
-      getTileManage(),
-      startAndEndPos,
-      cacheMap
-    )
-  }
-
-  // 监听清空画布
-  cleanButton.onclick = () => {
-    // 清空了画布之前需要入栈
-    tempMap.push({
-      layer: currentLayer,
-      map: gridManagerArray[currentLayer].getClone()
-    })
-
-    gridManagerArray[currentLayer].cleanMap()
+  // 定义一个刷新事件的监听
+  window.addEventListener('refreshData', () => {
     cacheMap.setAllChange() // 缓存也要全部变更
     RendererTools.refresh(
       ctx,
@@ -158,6 +127,32 @@ export function drawCanvas(): void {
       startAndEndPos,
       cacheMap
     )
+  })
+
+  // 改变了显示模式也需要刷新
+  showType.onclick = (e) => {
+    if ((e.target as HTMLInputElement).tagName == 'INPUT') {
+      isShowAll = (e.target as HTMLInputElement).value == '0'
+      window.dispatchEvent(refreshEvent) // 通知更新数据
+    }
+  }
+
+  // 更改图层
+  layer.onchange = () => {
+    currentLayer = layer.selectedIndex
+    window.dispatchEvent(refreshEvent) // 通知更新数据
+  }
+
+  // 监听清空画布
+  cleanButton.onclick = () => {
+    // 清空了画布之前需要入栈
+    tempMap.push({
+      layer: currentLayer,
+      map: gridManagerArray[currentLayer].getClone()
+    })
+
+    gridManagerArray[currentLayer].cleanMap()
+    window.dispatchEvent(refreshEvent) // 通知更新数据
   }
 
   // 监听撤回键（使用栈）
@@ -168,20 +163,7 @@ export function drawCanvas(): void {
         // 弹栈
         const temp = tempMap.pop()
         gridManagerArray[temp.layer].setMap(temp.map)
-        cacheMap.setAllChange() // 撤回也别忘了清空缓存
-        RendererTools.refresh(
-          ctx,
-          canvas,
-          _space,
-          _gridRowSize,
-          _gridColSize,
-          gridManagerArray,
-          currentLayer,
-          isShowAll,
-          getTileManage(),
-          startAndEndPos,
-          cacheMap
-        )
+        window.dispatchEvent(refreshEvent) // 通知更新数据
       }
     }
   }

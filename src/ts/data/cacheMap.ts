@@ -8,16 +8,9 @@
  * @author alsritter(alsritter1@gmail.com)
  */
 
-export class ModifiedPos {
-  x: number
-  y: number
-  constructor(x: number, y: number) {
-    this.x = x
-    this.y = y
-  }
-}
+import BasePos from './VO/BasePos'
 
-export class CacheMap {
+export default class CacheMap {
   private cols: number
   private rows: number
   private map: boolean[][]
@@ -42,14 +35,14 @@ export class CacheMap {
    * 返回被修改的位置
    * @returns {ModifiedPos[]} 里面是被修改的位置，需要被更新
    */
-  getChange(): ModifiedPos[] {
-    const list: ModifiedPos[] = []
+  getChange(): BasePos[] {
+    const list: BasePos[] = []
 
     // 如果有被修改的则把这个位置添加到 List 里面
     for (let i = 0; i < this.rows; i++) {
       for (let j = 0; j < this.cols; j++) {
         if (this.map[i][j]) {
-          list.push(new ModifiedPos(i, j))
+          list.push(new BasePos(i, j))
         }
       }
     }

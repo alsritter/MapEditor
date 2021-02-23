@@ -4,12 +4,14 @@
  * @author alsritter(alsritter1@gmail.com)
  */
 
-import { TileManager } from '../data/TileManager'
-import { GridManager, StartAndEndPos } from '../data/gridManager'
-import { DrawTools } from './drawTools'
-import { CacheMap, ModifiedPos } from '../data/cacheMap'
+import StartAndEndPos from '../data/VO/StartAndEndPos'
+import TileManager from '../data/TileManager'
+import GridManager from '../data/gridManager'
+import DrawTools from './drawTools'
+import CacheMap from '../data/cacheMap'
+import BasePos from '../data/VO/BasePos'
 
-export class RendererTools {
+export default class RendererTools {
   /**
    * 绘制起点和终点
    *
@@ -33,8 +35,6 @@ export class RendererTools {
 
     // 绘制终点
     DrawTools.drawColor(ctx, space, e_x, e_y, 'rgba(0, 122, 204, 0.5)')
-
-
   }
 
   /**
@@ -67,8 +67,6 @@ export class RendererTools {
   ): void {
     // 局部刷新
     const modif = cacheMap.getChange()
-
-    DrawTools.drawGrid(ctx, space, canvas.width, space * rows, cols, rows)
 
     for (let i = 0; i < modif.length; i++) {
       // 先清空指定的位置
@@ -117,6 +115,8 @@ export class RendererTools {
       gridManagerArray[0].getGrid(flag.end.x, flag.end.y).x,
       gridManagerArray[0].getGrid(flag.end.x, flag.end.y).y
     )
+
+    DrawTools.drawGrid(ctx, space, canvas.width, space * rows, cols, rows)
   }
 
   /**
@@ -132,7 +132,7 @@ export class RendererTools {
   private static changeTile(
     gridManagerArray: GridManager[],
     layer: number,
-    modif: ModifiedPos[],
+    modif: BasePos[],
     index: number,
     tileManager: TileManager,
     ctx: CanvasRenderingContext2D,

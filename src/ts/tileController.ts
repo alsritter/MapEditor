@@ -4,17 +4,17 @@
  * @author alsritter(alsritter1@gmail.com)
  */
 
-import { DrawTools } from './view/drawTools'
-import { GridManager } from './data/gridManager'
-import { TileManager } from './data/TileManager'
+import DrawTools from './view/drawTools'
+import GridManager from './data/gridManager'
+import TileManager from './data/TileManager'
 import { drawCanvas } from './canvasController'
 import { exportData } from './exportMapData'
+import { importData } from './importMapData'
 
 /**
  * Tile 的索引
  */
 class TileIndex {
-
   x: number
   y: number
 
@@ -27,8 +27,6 @@ class TileIndex {
 const _tileIndex = new TileIndex()
 let _tileManager: TileManager // 需要把这个传递出去，所以这里需要提升到全局
 
-
-
 function drawTiles() {
   // 先绘制网格
   const canvas = document.getElementById('tileCanvas') as HTMLCanvasElement
@@ -36,7 +34,6 @@ function drawTiles() {
   img.onload = () => {
     canvas.width = img.width
     canvas.height = img.height
-
 
     const _cols = 16
     const _rows = 16
@@ -74,6 +71,8 @@ function drawTiles() {
     drawCanvas()
     // 等待上面的画布加载完成才能导出数据
     exportData()
+    // 加载数据
+    importData()
   }
 
   img.src = './src/img/tiles.png'

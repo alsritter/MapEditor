@@ -4,10 +4,10 @@
  * @author alsritter(alsritter1@gmail.com)
  */
 
-import { GridManager } from '../data/gridManager'
-import { TileManager } from '../data/TileManager'
+import GridManager from '../data/gridManager'
+import TileManager from '../data/TileManager'
 
-export class DrawTools {
+export default class DrawTools {
   /**
    * 绘制网格
    *

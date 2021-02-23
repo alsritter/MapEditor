@@ -7,7 +7,7 @@
 /**
  * 这里主要是标识所用的工具
  */
-class Tool {
+export default class Tool {
   /**
    * 单笔刷
    */
@@ -82,5 +82,3 @@ class Tool {
     }
   }
 }
-
-export { Tool }

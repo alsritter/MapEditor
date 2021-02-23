@@ -5,12 +5,12 @@
  * @author alsritter(alsritter1@gmail.com)
  */
 
-import { Grid } from './gridManager'
+import Grid from './VO/Grid'
 
 /**
  * 自定义的栈结构，主要用来维护 画布数据
  */
-export class MapStack {
+export default class MapStack {
   private arr: Array<{ layer: number, map: Grid[][] }>
 
   constructor() {

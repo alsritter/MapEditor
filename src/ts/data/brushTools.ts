@@ -4,11 +4,12 @@
  * @author alsritter(alsritter1@gmail.com)
  */
 
-import { GridManager, StartAndEndPos } from './gridManager'
-import { TileManager } from './TileManager'
-import { CacheMap } from './cacheMap'
+import GridManager from './gridManager'
+import TileManager from './TileManager'
+import CacheMap from './cacheMap'
+import StartAndEndPos from './VO/StartAndEndPos'
 
-export class BrushTools {
+export default class BrushTools {
   /**
    * 设置出生点的位置
    *

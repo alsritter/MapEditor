@@ -4,32 +4,12 @@
  * @author alsritter(alsritter1@gmail.com)
  */
 
-/**
- * 单个 Tile 在图片的位置
- */
-class Tile {
-
-  x: number
-  y: number
-  isEmpty: boolean
-
-  /**
-   * Tile 在贴图里面的位置，以及保存它的路径偏移量（贴图位置和路径偏移量无关，后者是保存它显示在屏幕的位置）
-   * @param {Number} x Tile 在贴图里的起始 x
-   * @param {Number} y Tile 在贴图里的起始 y
-   * @param {Boolean}} isEmpty 是否是空的
-   */
-  constructor(x: number, y: number, isEmpty: boolean) {
-    this.x = x
-    this.y = y
-    this.isEmpty = isEmpty
-  }
-}
+import Tile from './VO/Tile'
 
 /**
  * TileImage 里面的 Tile
  */
-export class TileManager {
+export default class TileManager {
   // 使用 # 号可以标识私有变量
   private cols: number
   private rows: number
@@ -44,7 +24,12 @@ export class TileManager {
    * @param {Number} rows Tile贴图的高度（一行有多少个 Tile）
    * @param {HTMLImageElement} img 这里传入的 Tile 贴图，必须放在 onload 里面执行
    */
-  constructor(ctx: CanvasRenderingContext2D, cols: number, rows: number, img: HTMLImageElement) {
+  constructor(
+    ctx: CanvasRenderingContext2D,
+    cols: number,
+    rows: number,
+    img: HTMLImageElement
+  ) {
     this.cols = cols
     this.rows = rows
     this.img = img
@@ -83,7 +68,13 @@ export class TileManager {
    * @param {Number} space 大小
    * @returns {Boolean} true 表示是空的
    */
-  private tileIsEmpty(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, y: number, space: number): boolean {
+  private tileIsEmpty(
+    ctx: CanvasRenderingContext2D,
+    img: HTMLImageElement,
+    x: number,
+    y: number,
+    space: number
+  ): boolean {
     // 清除画布
     ctx.clearRect(0, 0, space, space)
     // 图片绘制在画布上
