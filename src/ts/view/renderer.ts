@@ -4,12 +4,12 @@
  * @author alsritter(alsritter1@gmail.com)
  */
 
-import StartAndEndPos from '../data/VO/StartAndEndPos'
-import TileManager from '../data/TileManager'
-import GridManager from '../data/gridManager'
-import DrawTools from './drawTools'
-import CacheMap from '../data/cacheMap'
-import BasePos from '../data/VO/BasePos'
+import StartAndEndPos from "../data/VO/StartAndEndPos";
+import TileManager from "../data/TileManager";
+import GridManager from "../data/gridManager";
+import DrawTools from "./drawTools";
+import CacheMap from "../data/cacheMap";
+import BasePos from "../data/VO/BasePos";
 
 export default class RendererTools {
   /**
@@ -17,24 +17,24 @@ export default class RendererTools {
    *
    * @param {CanvasRenderingContext2D} ctx
    * @param {Number} space
-   * @param {Number} b_x
-   * @param {Number} b_y
-   * @param {Number} e_x
-   * @param {Number} e_y
+   * @param {Number} bX
+   * @param {Number} bY
+   * @param {Number} eX
+   * @param {Number} eY
    */
   private static drawStartAndEnd(
     ctx: CanvasRenderingContext2D,
     space: number,
-    b_x: number,
-    b_y: number,
-    e_x: number,
-    e_y: number
+    bX: number,
+    bY: number,
+    eX: number,
+    eY: number
   ) {
     // 绘制起点
-    DrawTools.drawColor(ctx, space, b_x, b_y, 'rgba(238, 49, 49, 0.5)')
+    DrawTools.drawColor(ctx, space, bX, bY, "rgba(238, 49, 49, 0.5)");
 
     // 绘制终点
-    DrawTools.drawColor(ctx, space, e_x, e_y, 'rgba(0, 122, 204, 0.5)')
+    DrawTools.drawColor(ctx, space, eX, eY, "rgba(0, 122, 204, 0.5)");
   }
 
   /**
@@ -66,7 +66,7 @@ export default class RendererTools {
     cacheMap: CacheMap
   ): void {
     // 局部刷新
-    const modif = cacheMap.getChange()
+    const modif = cacheMap.getChange();
 
     for (let i = 0; i < modif.length; i++) {
       // 先清空指定的位置
@@ -75,7 +75,7 @@ export default class RendererTools {
         space,
         gridManagerArray[layer].getGrid(modif[i].x, modif[i].y).x,
         gridManagerArray[layer].getGrid(modif[i].x, modif[i].y).y
-      )
+      );
 
       // 如果显示全部图层则，遍历刷新每一层的这个位置
       if (showAll) {
@@ -88,7 +88,7 @@ export default class RendererTools {
             tileManager,
             ctx,
             space
-          )
+          );
         }
       } else {
         // 绘制 Map 里面已有的 Tile
@@ -100,12 +100,12 @@ export default class RendererTools {
           tileManager,
           ctx,
           space
-        )
+        );
       }
     }
 
     // 更新完成后要归零
-    cacheMap.cleanChange()
+    cacheMap.cleanChange();
 
     RendererTools.drawStartAndEnd(
       ctx,
@@ -114,9 +114,9 @@ export default class RendererTools {
       gridManagerArray[0].getGrid(flag.start.x, flag.start.y).y,
       gridManagerArray[0].getGrid(flag.end.x, flag.end.y).x,
       gridManagerArray[0].getGrid(flag.end.x, flag.end.y).y
-    )
+    );
 
-    DrawTools.drawGrid(ctx, space, canvas.width, space * rows, cols, rows)
+    DrawTools.drawGrid(ctx, space, canvas.width, space * rows, cols, rows);
   }
 
   /**
@@ -146,19 +146,23 @@ export default class RendererTools {
         null &&
       !DrawTools.isEmpty(
         tileManager,
-        gridManagerArray[layer].getGrid(modif[index].x, modif[index].y).tileX,
-        gridManagerArray[layer].getGrid(modif[index].x, modif[index].y).tileY
+        gridManagerArray[layer].getGrid(modif[index].x, modif[index].y)
+          .tileX as number,
+        gridManagerArray[layer].getGrid(modif[index].x, modif[index].y)
+          .tileY as number
       ) // 这个判断得放在后面
     ) {
       DrawTools.drawTile(
         ctx,
         tileManager,
-        gridManagerArray[layer].getGrid(modif[index].x, modif[index].y).tileX,
-        gridManagerArray[layer].getGrid(modif[index].x, modif[index].y).tileY,
+        gridManagerArray[layer].getGrid(modif[index].x, modif[index].y)
+          .tileX as number,
+        gridManagerArray[layer].getGrid(modif[index].x, modif[index].y)
+          .tileY as number,
         space,
         gridManagerArray[layer].getGrid(modif[index].x, modif[index].y).x,
         gridManagerArray[layer].getGrid(modif[index].x, modif[index].y).y
-      )
+      );
     }
   }
 
@@ -210,7 +214,7 @@ export default class RendererTools {
       tileManager,
       flag,
       cacheMap
-    )
+    );
 
     // 显示当前选中的 Tile
     DrawTools.drawTile(
@@ -221,7 +225,7 @@ export default class RendererTools {
       space,
       gridManagerArray[layer].getGrid(posX, posY).x,
       gridManagerArray[layer].getGrid(posX, posY).y
-    )
+    );
 
     // 绘制阴影
     DrawTools.drawDark(
@@ -229,10 +233,10 @@ export default class RendererTools {
       space,
       gridManagerArray[layer].getGrid(posX, posY).x,
       gridManagerArray[layer].getGrid(posX, posY).y
-    )
+    );
 
     // 绘制阴影也需要更新 cache
-    cacheMap.setChange(posX, posY)
+    cacheMap.setChange(posX, posY);
   }
 
   /**
@@ -281,7 +285,7 @@ export default class RendererTools {
       tileManager,
       flag,
       cacheMap
-    )
+    );
 
     // 绘制阴影
     DrawTools.drawDark(
@@ -289,9 +293,9 @@ export default class RendererTools {
       space,
       gridManagerArray[layer].getGrid(posX, posY).x,
       gridManagerArray[layer].getGrid(posX, posY).y
-    )
+    );
 
     // 绘制阴影也需要更新 cache
-    cacheMap.setChange(posX, posY)
+    cacheMap.setChange(posX, posY);
   }
 }

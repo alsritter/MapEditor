@@ -1,17 +1,22 @@
 module.exports = {
-  parser: '@typescript-eslint/parser', //定义ESLint的解析器
-  extends: ['plugin:@typescript-eslint/recommended'], //定义文件继承的子规范，官方推荐规则
-  plugins: ['@typescript-eslint'], //定义了该eslint文件所依赖的插件
+  root: true,
+  env: {
+    node: true
+  },
+  extends: [
+    "plugin:vue/vue3-essential",
+    "eslint:recommended",
+    "@vue/typescript/recommended",
+    "@vue/prettier",
+    "@vue/prettier/@typescript-eslint"
+  ],
   parserOptions: {
-    project: './tsconfig.json', // 类型信息
-    extraFileExtensions: ['.html']
+    ecmaVersion: 2020
   },
   rules: {
-    '@typescript-eslint/no-inferrable-types': 'off' // 关闭类型推断
-  },
-  env: {
-    //指定代码的运行环境
-    browser: true,
-    node: true
+    "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
+    "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/ban-ts-ignore": "off"
   }
-}
+};

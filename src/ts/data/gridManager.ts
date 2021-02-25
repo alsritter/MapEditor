@@ -4,13 +4,12 @@
  * @author alsritter(alsritter1@gmail.com)
  */
 
-import Grid from './VO/Grid'
-
+import Grid from "./VO/Grid";
 
 export default class GridManager {
-  private map: Grid[][]
-  private cols: number
-  private rows: number
+  private map: Grid[][];
+  private cols: number;
+  private rows: number;
 
   /**
    *
@@ -21,16 +20,16 @@ export default class GridManager {
   constructor(space: number, cols: number, rows: number) {
     // 先初始化 Map
     this.map = new Array<Array<Grid>>();
-    this.cols = cols
-    this.rows = rows
+    this.cols = cols;
+    this.rows = rows;
 
     for (let i = 0; i < rows; i++) {
-      const temp = []
+      const temp = [];
       for (let j = 0; j < cols; j++) {
         // 初始化先赋值为 null
-        temp.push(new Grid(j * space, i * space, null, null))
+        temp.push(new Grid(j * space, i * space, null, null));
       }
-      this.map.push(temp)
+      this.map.push(temp);
     }
   }
 
@@ -42,21 +41,21 @@ export default class GridManager {
    * @returns {Grid} 返回 Grid
    */
   getGrid(x: number, y: number): Grid {
-    return this.map[x][y]
+    return this.map[x][y];
   }
 
   /**
    * @returns {Number} 返回 Cols
    */
   getColNum(): number {
-    return this.cols
+    return this.cols;
   }
 
   /**
    * @returns {Number} 返回 Rows
    */
   getRowNum(): number {
-    return this.rows
+    return this.rows;
   }
 
   /**
@@ -64,7 +63,7 @@ export default class GridManager {
    * @returns {Grid[][]} 返回克隆的 Map
    */
   getClone(): Grid[][] {
-    return JSON.parse(JSON.stringify(this.map))
+    return JSON.parse(JSON.stringify(this.map));
   }
 
   /**
@@ -72,7 +71,7 @@ export default class GridManager {
    * @param {Grid[][]} newMap
    */
   setMap(newMap: Grid[][]): void {
-    this.map = newMap
+    this.map = newMap;
   }
 
   /**
@@ -81,8 +80,8 @@ export default class GridManager {
   cleanMap(): void {
     for (let i = 0; i < this.map.length; i++) {
       for (let j = 0; j < this.map[i].length; j++) {
-        this.map[i][j].tileX = null
-        this.map[i][j].tileY = null
+        this.map[i][j].tileX = null;
+        this.map[i][j].tileY = null;
       }
     }
   }

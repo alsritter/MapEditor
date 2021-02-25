@@ -5,55 +5,55 @@
  * @author alsritter(alsritter1@gmail.com)
  */
 
-import Grid from './VO/Grid'
+import Grid from "./VO/Grid";
 
 /**
  * 自定义的栈结构，主要用来维护 画布数据
  */
 export default class MapStack {
-  private arr: Array<{ layer: number, map: Grid[][] }>
+  private arr: Array<{ layer: number; map: Grid[][] }>;
 
   constructor() {
-    this.arr = []
+    this.arr = [];
   }
 
   /**
    * 压栈操作
-   * @param { { layer: number, map: Grid[][] }} mapInfo 
+   * @param { { layer: number, map: Grid[][] }} mapInfo
    */
-  push(mapInfo: { layer: number, map: Grid[][] }): void {
-    this.arr.push(mapInfo)
+  push(mapInfo: { layer: number; map: Grid[][] }): void {
+    this.arr.push(mapInfo);
   }
 
   /**
    * 退栈操作
    */
   pop(): { layer: number; map: Grid[][] } {
-    return this.arr.pop()
+    return this.arr.pop() as { layer: number; map: Grid[][] };
   }
   /**
    * 获取栈顶元素
    */
-  top(): { layer: number, map: Grid[][] } {
-    return this.arr[this.arr.length - 1]
+  top(): { layer: number; map: Grid[][] } {
+    return this.arr[this.arr.length - 1];
   }
 
   /**
    * 获取栈长
    */
   size(): number {
-    return this.arr.length
+    return this.arr.length;
   }
 
   /**
    * 清空栈
    */
   clear(): boolean {
-    this.arr = []
-    return true
+    this.arr = [];
+    return true;
   }
 
   toString(): string {
-    return this.arr.toString()
+    return this.arr.toString();
   }
 }

@@ -8,26 +8,26 @@
  * @author alsritter(alsritter1@gmail.com)
  */
 
-import BasePos from './VO/BasePos'
+import BasePos from "./VO/BasePos";
 
 export default class CacheMap {
-  private cols: number
-  private rows: number
-  private map: boolean[][]
+  private cols: number;
+  private rows: number;
+  private map: boolean[][];
 
   constructor(cols: number, rows: number) {
-    this.cols = cols
-    this.rows = rows
+    this.cols = cols;
+    this.rows = rows;
 
-    this.map = []
+    this.map = [];
 
     // 每个数组都需要先初始化 默认是 false
     for (let i = 0; i < rows; i++) {
-      const temp: boolean[] = []
+      const temp: boolean[] = [];
       for (let j = 0; j < cols; j++) {
-        temp.push(false)
+        temp.push(false);
       }
-      this.map.push(temp)
+      this.map.push(temp);
     }
   }
 
@@ -36,18 +36,18 @@ export default class CacheMap {
    * @returns {ModifiedPos[]} 里面是被修改的位置，需要被更新
    */
   getChange(): BasePos[] {
-    const list: BasePos[] = []
+    const list: BasePos[] = [];
 
     // 如果有被修改的则把这个位置添加到 List 里面
     for (let i = 0; i < this.rows; i++) {
       for (let j = 0; j < this.cols; j++) {
         if (this.map[i][j]) {
-          list.push(new BasePos(i, j))
+          list.push(new BasePos(i, j));
         }
       }
     }
 
-    return list
+    return list;
   }
 
   /**
@@ -56,7 +56,7 @@ export default class CacheMap {
    * @param y 被修改的 y 坐标
    */
   setChange(x: number, y: number): void {
-    this.map[x][y] = true
+    this.map[x][y] = true;
   }
 
   /**
@@ -65,7 +65,7 @@ export default class CacheMap {
   setAllChange(): void {
     for (let i = 0; i < this.rows; i++) {
       for (let j = 0; j < this.cols; j++) {
-        this.map[i][j] = true
+        this.map[i][j] = true;
       }
     }
   }
@@ -76,7 +76,7 @@ export default class CacheMap {
   cleanChange(): void {
     for (let i = 0; i < this.rows; i++) {
       for (let j = 0; j < this.cols; j++) {
-        this.map[i][j] = false
+        this.map[i][j] = false;
       }
     }
   }

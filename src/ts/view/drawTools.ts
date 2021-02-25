@@ -4,8 +4,8 @@
  * @author alsritter(alsritter1@gmail.com)
  */
 
-import GridManager from '../data/gridManager'
-import TileManager from '../data/TileManager'
+import GridManager from "../data/gridManager";
+import TileManager from "../data/TileManager";
 
 export default class DrawTools {
   /**
@@ -28,21 +28,21 @@ export default class DrawTools {
   ): void {
     // 采用遍历的方式，绘画x轴的线条
     for (let i = 0; i < gridWithSize; i++) {
-      ctx.beginPath() // 开启路径，设置不同的样式
-      ctx.moveTo(space * i - 0.5, 0) // -0.5是为了解决像素模糊问题
-      ctx.lineTo(space * i - 0.5, height)
-      ctx.setLineDash([1, 2]) //绘制虚线
-      ctx.strokeStyle = '#2a2a2a' // 设置每个线条的颜色
-      ctx.stroke()
+      ctx.beginPath(); // 开启路径，设置不同的样式
+      ctx.moveTo(space * i - 0.5, 0); // -0.5是为了解决像素模糊问题
+      ctx.lineTo(space * i - 0.5, height);
+      ctx.setLineDash([1, 2]); //绘制虚线
+      ctx.strokeStyle = "#2a2a2a"; // 设置每个线条的颜色
+      ctx.stroke();
     }
 
     // 同理y轴
     for (let i = 0; i < gridHeightSize; i++) {
-      ctx.beginPath() // 开启路径，设置不同的样式
-      ctx.moveTo(0, space * i - 0.5)
-      ctx.lineTo(width, space * i - 0.5)
-      ctx.strokeStyle = '#2a2a2a'
-      ctx.stroke()
+      ctx.beginPath(); // 开启路径，设置不同的样式
+      ctx.moveTo(0, space * i - 0.5);
+      ctx.lineTo(width, space * i - 0.5);
+      ctx.strokeStyle = "#2a2a2a";
+      ctx.stroke();
     }
   }
 
@@ -60,11 +60,11 @@ export default class DrawTools {
     x: number,
     y: number
   ): void {
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'
-    ctx.beginPath()
-    ctx.rect(x, y, space, space)
-    ctx.fill()
-    ctx.closePath()
+    ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+    ctx.beginPath();
+    ctx.rect(x, y, space, space);
+    ctx.fill();
+    ctx.closePath();
   }
 
   /**
@@ -83,11 +83,11 @@ export default class DrawTools {
     y: number,
     color: string
   ): void {
-    ctx.fillStyle = color
-    ctx.beginPath()
-    ctx.rect(x, y, space, space)
-    ctx.fill()
-    ctx.closePath()
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.rect(x, y, space, space);
+    ctx.fill();
+    ctx.closePath();
   }
 
   /**
@@ -104,7 +104,7 @@ export default class DrawTools {
     x: number,
     y: number
   ): void {
-    ctx.clearRect(x, y, space, space)
+    ctx.clearRect(x, y, space, space);
   }
 
   /**
@@ -129,15 +129,15 @@ export default class DrawTools {
   ): void {
     ctx.drawImage(
       map.getImage(),
-      map.getTile(tileX, tileY).x,
-      map.getTile(tileX, tileY).y,
+      map.getTile(tileX, tileY).x!,
+      map.getTile(tileX, tileY).y!,
       map.getWidth(),
       map.getHeight(),
       x,
       y,
       space,
       space
-    )
+    );
   }
 
   /**
@@ -151,22 +151,22 @@ export default class DrawTools {
     width: number,
     height: number
   ): void {
-    const emptyBox = ctx.createImageData(width, height)
-    const emptyBoxData = emptyBox.data
+    const emptyBox = ctx.createImageData(width, height);
+    const emptyBoxData = emptyBox.data;
 
     // 通过 canvas宽高 来遍历一下 canvas 上的所有像素点
     for (let i = 0; i < height; i++) {
       for (let j = 0; j < width; j++) {
-        const point = (i * width + j) << 2 // << 相当于 * 4
-        const rgbData = ((i >> 2) + (j >> 2)) & (1 == 1 ? 1 : 0) ? 204 : 255 // >> 2 相当于 / 4 取整， & 1相当于 % 2
-        emptyBoxData[point] = rgbData
-        emptyBoxData[point + 1] = rgbData
-        emptyBoxData[point + 2] = rgbData
-        emptyBoxData[point + 3] = 255
+        const point = (i * width + j) << 2; // << 相当于 * 4
+        const rgbData = ((i >> 2) + (j >> 2)) & 1 ? 204 : 255; // >> 2 相当于 / 4 取整， & 1相当于 % 2
+        emptyBoxData[point] = rgbData;
+        emptyBoxData[point + 1] = rgbData;
+        emptyBoxData[point + 2] = rgbData;
+        emptyBoxData[point + 3] = 255;
       }
     }
 
-    ctx.putImageData(emptyBox, 0, 0)
+    ctx.putImageData(emptyBox, 0, 0);
   }
 
   /**
@@ -177,7 +177,7 @@ export default class DrawTools {
    * @returns {Boolean} true 表示是空的
    */
   static isEmpty(map: TileManager, tileX: number, tileY: number): boolean {
-    return map.getTile(tileX, tileY).isEmpty
+    return map.getTile(tileX, tileY).isEmpty;
   }
 
   /**
@@ -202,9 +202,9 @@ export default class DrawTools {
           i,
           j,
           space,
-          pos.getGrid(i, j).x,
-          pos.getGrid(i, j).y
-        )
+          pos.getGrid(i, j).x!,
+          pos.getGrid(i, j).y!
+        );
       }
     }
   }
