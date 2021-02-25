@@ -23,7 +23,7 @@ export default defineComponent({
       // 先绘制网格
       const canvas = document.getElementById("tileCanvas") as HTMLCanvasElement;
       const img = new Image();
-      img.src = require("../assets/img/tiles.png");
+      img.src = "./static/img/tiles.png";
 
       img.onload = () => {
         canvas.width = img.width;

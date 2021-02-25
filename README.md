@@ -4,14 +4,16 @@
 
 ## 基本功能
 
+在线展示地址 https://alsritter.gitee.io/map-editor-online
+
 ### 地图大小参考
 52 * 4 = 208
 
-![](http://images.alsritter.icu/images/2021/02/17/20210217130937.png)
+![20210217130937.png](https://i.loli.net/2021/02/25/PgRqnUSmyK3euIl.png)
 
 ### 绘制网格
 
-![](http://images.alsritter.icu/images/2021/02/25/20210225124454.png)
+![image.png](https://i.loli.net/2021/02/25/YbTMwyJBeloiXq8.png)
 
 
 ```html
@@ -64,7 +66,7 @@ console.log('offset: ', e.offsetX, e.offsetY)
 console.log('client: ', e.clientX, e.clientY)
 ```
 
-![](http://images.alsritter.icu/images/2021/02/25/20210225131205.png)
+![image.png](https://i.loli.net/2021/02/25/U1MamqCAvEY9wpr.png)
 
 ```js
  const map = []
@@ -101,18 +103,18 @@ console.log('client: ', e.clientX, e.clientY)
 
 这里先制作这个取色板
 
-![](http://images.alsritter.icu/images/2021/02/25/20210225125236.png)
+![image.png](https://i.loli.net/2021/02/25/aSWrM6wCPUkgyIs.png)
 
 
 
 ### 切割地图集
 存储 Tileset 最有效的方式是地图集或子画面表。这是在单个图像文件中分组在一起的所有所需磁贴。当需要绘制磁贴时，游戏画布上仅呈现此较大图像的一小部分。如下 RPGMaker 就是使用的 Tileser
 
-![](http://images.alsritter.icu/images/2021/02/16/20210216115425.png)
+![image.png](https://i.loli.net/2021/02/25/o3N7pXStfICscDh.png)
 
 这里提供教程所用的 Tileset
 
-![](http://images.alsritter.icu/images/2021/02/16/tiles.png)
+![tiles.png](https://i.loli.net/2021/02/25/QM1iNf2Xk8ndwBl.png)
 
 第一步就是将这个地图集切开（这里直接演示如何取得数据，实际在下一节才正式开始使用）
 
@@ -150,7 +152,7 @@ window.addEventListener('load', draw, false)
 
 绘制效果如下
 
-![](http://images.alsritter.icu/images/2021/02/16/20210216143458.png)
+![image.png](https://i.loli.net/2021/02/25/XV3tjnEhFigKylY.png)
 
 ### Map 取得格子位置
 
@@ -163,7 +165,7 @@ canvas.onmousedown = (e) => {
 
 ### 绘制方格背景
 
-![](http://images.alsritter.icu/images/2021/02/25/20210225125023.png)
+![image.png](https://i.loli.net/2021/02/25/LOJprCldYjZD7sz.png)
 
 ```js
   /**
@@ -491,7 +493,7 @@ cacheMap.cleanChange();
 
 PS  中的油漆桶其实一般用作填色，例如点击这个画好的圈里面会自动填满它而不会跑到外面来
 
-![](http://images.alsritter.icu/images/2021/02/25/20210225115729.png)
+![image.png](https://i.loli.net/2021/02/25/osa3ZfYXrzEMy2C.png)
 
 这里使用 4-联通算法
 
@@ -528,7 +530,7 @@ Flood Fill Algorithm
 
 注入填充算法没有边界的概念，只是对联通区域内 **指定的颜色进行替换**
 
-![](http://images.alsritter.icu/images/2021/02/25/20210225140437.png)
+![image.png](https://i.loli.net/2021/02/25/FLAe5anVNkq3Dhl.png)
 
 ```js
 function floodSeedFill(map, x, y, oldValue, newValue, maxX, minX, maxY, minY) {
