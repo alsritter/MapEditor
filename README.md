@@ -1,10 +1,21 @@
-# MapEditor
-Map generator is designed for game developers to simplify development and improve efficiency
+<div align=center>
+  <h1>MapEditor</h1>
+</div>
 
-[![](https://img.shields.io/badge/license-Apache%202-blue)](https://github.com/alsritter/MapEditor/blob/master/LICENSE) [![](https://img.shields.io/badge/vue-3.0.0-green)](https://v3.vuejs.org/) [![](https://img.shields.io/badge/element--plus-1.0.2--beta.32-brightgreen)](https://element-plus.org/)
+<p align="center"> <b>Map generator is designed for game developers to simplify development and improve efficiency</b> </p>
+
+<p align="center">
+  <a href="https://github.com/alsritter/MapEditor/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-Apache%202-blue" alt="License"></a>
+  <a href="https://v3.vuejs.org/"><img src="https://img.shields.io/badge/vue-3.0.0-green" alt="Build State"></a>
+  <a href="https://element-plus.org/"><img src="https://img.shields.io/badge/element--plus-1.0.2--beta.32-brightgreen"/></a>
+</p>
 
 
-![](https://images.alsritter.icu/images/2021/05/06/86fc4139fd6d506652426d85c74ee6d3.png)
+<div align=center>
+<img  src="https://images.alsritter.icu/images/2021/05/06/86fc4139fd6d506652426d85c74ee6d3.png"/>
+</div>
+
+
 
 ## Online use
 
