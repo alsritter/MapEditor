@@ -1,68 +1,69 @@
-# MapEditor
-Map generator is designed for game developers to simplify development and improve efficiency
+# 简介
 
 [![](https://img.shields.io/badge/license-Apache%202-blue)](https://github.com/alsritter/MapEditor/blob/master/LICENSE) [![](https://img.shields.io/badge/vue-3.0.0-green)](https://v3.vuejs.org/) [![](https://img.shields.io/badge/element--plus-1.0.2--beta.32-brightgreen)](https://element-plus.org/)
 
+为游戏开发者设计的地图生成器，它为简化开发、提高效率而生
 
 ![](https://images.alsritter.icu/images/2021/05/06/86fc4139fd6d506652426d85c74ee6d3.png)
 
-## Online use
+## 在线访问
 
-Online display: https://alsritter.gitee.io/map-editor-online
+在线展示地址 https://alsritter.gitee.io/map-editor-online
 
-⚠ This tool does not adapt to mobile terminal
-
-## Basic Functions
+⚠ 注意：本工具不对移动端进行适配
 
 
-### Import and export data 💾
+## 基本功能介绍
+
+
+### 导入导出数据 💾
 
 ![](https://images.alsritter.icu/images/2021/05/06/20210506160545.png)
 
-### Choose the Tile to use 🗃
+### 选择使用的砖块 🗃
 
-Select the currently used brick
+选择你使用的砖块
 
 ![](https://images.alsritter.icu/images/2021/05/06/20210506160641.png)
 
-### Select the layer 📌
+### 选择工作的图层 📌
 
-By default (you can parse the data in your own way) :
+默认情况下（可以以自己的方式解析数据）：
 
-1. ***Background:** a Background layer that does not interact with the player*
-2. ***Collision:** Collision layer*
-3. ***Traps:** Traps layer*
-4. ***Foreground:** Occlude the layer in front of the character*
+1. *Background：背景层，不与玩家交互*
+2. *Collision：碰撞层*
+3. *Traps：陷阱图层*
+4. *Foreground：遮挡在角色前面的图层*
 
 ![](https://images.alsritter.icu/images/2021/05/06/20210506160710.png)
 
-### Set Map Size
+### 设置地图大小
 
 ![](https://images.alsritter.icu/images/2021/05/06/20210506163138.png)
 
-### Select Drawing Tool 📐
+### 选择绘图工具 📐
 
 ![](https://images.alsritter.icu/images/2021/05/06/20210506161004.png)
 
-What's the use of these tools?
+这些工具的作用：
 
-* *Pen Tool: the default pen tool, draw one square at a time* 
-* *Draw Area Tool: draw a block of squares*
-* *Fill ALL Tool: Paint bucket tool, used to cover layers*
-* *Fill Area Tool: used to fill the gaps*
-* *Replace Tiles Tool: Replace tiles*
-* *Erase Tool: Erase the current square*
-* *Erase Area Tool: Erase a block*
+* *Pen Tool：默认的笔工具，一次绘制一个方块*
+* *Draw Area Tool：绘制一个区块的方块*
+* *Fill ALL Tool：油漆桶工具，用于覆盖图层*
+* *Fill Area Tool：用于填满空隙*
+* *Replace Tiles Tool：替换砖块*
+* *Erase Tool：擦除当前方块*
+* *Erase Area Tool：擦除一个区块*
 
 ![](https://images.alsritter.icu/images/2021/05/06/20210506161654.png)
 
-Set birth point and end point
+设置出生点以及终点
 
-## How does it work? 🤨
+## 如何工作的？ 🤨
 
-Here are some working principles. Those who are not interested in this part can skip it directly~
+下面介绍一些工作原理，对这部分不感兴趣的可以直接跳过啦~
 
-### Draw grid
+### 绘制网格
 
 ![image.png](https://i.loli.net/2021/02/25/YbTMwyJBeloiXq8.png)
 
@@ -109,10 +110,8 @@ Here are some working principles. Those who are not interested in this part can 
 </script>
 ```
 
-### Mouse drawing color
-
-Note: There are three coordinate information that can be obtained by mouse events, offset must be used here for page, offset, and client, otherwise an error will occur
-
+### 鼠标绘制颜色
+注意：鼠标事件能获取的坐标信息有三个，page、offset、client这里得使用 offset，否则会出错
 ```js
 console.log('page: ', e.pageX, e.pageY)
 console.log('offset: ', e.offsetX, e.offsetY)
@@ -152,21 +151,20 @@ console.log('client: ', e.clientX, e.clientY)
 
 
 
-## Color picker 📕
+## 取色板 📕
 
 ![image.png](https://i.loli.net/2021/02/25/aSWrM6wCPUkgyIs.png)
 
-### Cutting atlas
-
-The most effective way to store Tileset is atlas or sprite sheet. This is all the required tiles grouped together in a single image file. When tiles need to be drawn, only a small part of this larger image is presented on the game canvas. The following RPGMaker is the Tileser used
+### 切割地图集
+存储 Tileset 最有效的方式是地图集或子画面表。这是在单个图像文件中分组在一起的所有所需磁贴。当需要绘制磁贴时，游戏画布上仅呈现此较大图像的一小部分。如下 RPGMaker 就是使用的 Tileser
 
 ![image.png](https://i.loli.net/2021/02/25/o3N7pXStfICscDh.png)
 
-Here is the Tileset used in the tutorial
+这里提供教程所用的 Tileset
 
 ![tiles.png](https://i.loli.net/2021/02/25/QM1iNf2Xk8ndwBl.png)
 
-The first step is to cut this atlas (here is a direct demonstration of how to obtain the data, and actually start to use it in the next section)
+第一步就是将这个地图集切开（这里直接演示如何取得数据，实际在下一节才正式开始使用）
 
 ```js
 function draw() {
@@ -200,11 +198,11 @@ function draw() {
 window.addEventListener('load', draw, false)
 ```
 
-The drawing effect is as follows
+绘制效果如下
 
 ![image.png](https://i.loli.net/2021/02/25/XV3tjnEhFigKylY.png)
 
-### Map get grid position
+### Map 取得格子位置
 
 ```js
 // 根据鼠标点击取得格子
@@ -213,7 +211,7 @@ canvas.onmousedown = (e) => {
 }
 ```
 
-### Draw a checkered background
+### 绘制方格背景
 
 ![image.png](https://i.loli.net/2021/02/25/LOJprCldYjZD7sz.png)
 
@@ -245,9 +243,9 @@ canvas.onmousedown = (e) => {
 ```
 
 
-### Storage location data
+### 存储 Tile贴图中格子的位置
 
-To store the graph data, you can use a custom class
+要存储该图数据，可以使用一个自定义类
 
 ```js
 /**
@@ -298,18 +296,16 @@ export class TileMap {
 ```
 
 
-### Mouse to get Tile
-Need to implement a mouse to move to a certain Tile to get the corresponding Tile number
+### 鼠标获取 Tile
+需要实现一个鼠标移动到某个 Tile 上面就能获取对应的 Tile 编号
 
-Note: There are three coordinate information that can be obtained by mouse events, offset must be used here for page, offset, and client, otherwise an error will occur
-
+注意：鼠标事件能获取的坐标信息有三个，page、offset、client这里得使用 offset，否则会出错
 ```js
 console.log('page: ', e.pageX, e.pageY)
 console.log('offset: ', e.offsetX, e.offsetY)
 console.log('client: ', e.clientX, e.clientY)
 ```
-
-These three events are mainly used: onmouseup, onmouseout, onmousedown
+主要就用到这三个事件：onmouseup、onmouseout、onmousedown
 
 ```js
 // 监听鼠标事件，松手时刷新画布
@@ -342,11 +338,11 @@ canvas.onmousedown = (e) => {
 ```
 
 
-## Event function 📬
+## 事件功能 📬
 
-Because there are many state changes involved, such as changing the layer, importing new data, changing the display mode, etc., it is necessary to use events to decouple them, and the control layer only needs to monitor the occurrence of a certain time.
+因为涉及到很多的状态改变，例如更换了图层，导入了新数据，显示模式改变了等等问题，所以需要使用事件来将它们解耦，控制层只需监听某一时间的发生就行了
 
-For example, a refresh event needs to be issued when a certain state has changed
+例如遇到某种状态改变了需要发出刷新事件
 
 ```ts
 // 监听显示模式（这里对 Vuex 的值进行监听）
@@ -359,7 +355,7 @@ $store.watch(
 );
 ```
 
-And monitor and refresh this event in the control layer
+而在控制层对这个事件进行监听刷新
 
 ```ts
 // 定义一个刷新事件的监听
@@ -368,8 +364,8 @@ window.addEventListener("refreshData", () => {
 });
 ```
 
-## withdraw
-This withdrawal is actually a process of stacking and popping, so you can maintain a stack yourself.
+## 实现撤回功能
+这个撤回实际上就是一个入栈和出栈的过程，因此自己维护一个栈就行了
 
 ```ts
 import Grid from "./VO/Grid";
@@ -414,9 +410,9 @@ export default class MapStack {
 }
 ```
 
-Push to the stack in time after each write
+每次写入后要及时入栈
 
-And then monitor in the control layer <kbd>Ctrl</kbd> + <kbd>Z</kbd>
+然后再在控制层去监听 <kbd>Ctrl</kbd> + <kbd>Z</kbd>
 
 ```ts
 // 监听撤回键（使用栈）
@@ -434,11 +430,11 @@ document.onkeydown = e => {
 ```
 
 
-## Regional update
+## 区域更新
 
-If you refresh all the data every frame, a lot of performance will be wasted, and there are multiple layers of data that make it worse
+如果每一帧都刷新全部数据会浪费很多性能，而且有多层数据就更雪上加霜了
 
-Create a cacheMap to record the modified location, it will be updated in the next frame
+创建一个 cacheMap 来记录修改了的位置，它会在下一帧更新
 
 ```ts
 import BasePos from "./VO/BasePos";
@@ -507,7 +503,7 @@ export default class CacheMap {
 }
 ```
 
-And after refreshing the data every frame, it will only be re-rendered after the Cache is changed.
+而在将每一帧刷新数据，改成只有 Cache 改变后才进行重新渲染
 
 ```ts
 // 局部刷新
@@ -540,15 +536,15 @@ cacheMap.cleanChange();
 ```
 
 
-## Filling algorithm
+## 填色算法
 
-In fact, the paint bucket in PS is generally used for coloring. For example, clicking on the painted circle will automatically fill it without going outside.
+PS  中的油漆桶其实一般用作填色，例如点击这个画好的圈里面会自动填满它而不会跑到外面来
 
 ![image.png](https://i.loli.net/2021/02/25/osa3ZfYXrzEMy2C.png)
 
-The 4-unicom algorithm is used here
+这里使用 4-联通算法
 
-> Note: 8-Unicom and 4-Unicom are only different in the number of judgments. The blue one is 4 Unicom, and the red one is the effect of 8 Unicom.
+注： 8-联通 和 4-联通只是在判断的数量上有区别，下图蓝色的是 4联通，红色是8联通的效果
 
 ![](http://images.alsritter.icu/images/2021/02/25/20210225135317.png)
 
@@ -574,11 +570,12 @@ const direction_8 = [
 ]
 ```
 
-### Flood Fill Algorithm
+### 注入填充算法
+Flood Fill Algorithm
 
-This can be used to achieve color replacement
+这个可以用来实现颜色替换
 
-The injection filling algorithm does not have the concept of a boundary, but only replaces the **specified color** in the Unicom area.
+注入填充算法没有边界的概念，只是对联通区域内 **指定的颜色进行替换**
 
 ![image.png](https://i.loli.net/2021/02/25/FLAe5anVNkq3Dhl.png)
 
@@ -606,9 +603,10 @@ function floodSeedFill(map, x, y, oldValue, newValue, maxX, minX, maxY, minY) {
 }
 ```
 
-### Boundary Fill Algorithm
+### 边界填充算法
+Boundary Fill Algorithm
 
-This is different from the direction of the above injection and filling. This is more about the boundary (the specified color is the boundary), which will replace all the values within the specified boundary
+这个与上面那个注入填充侧重的方向不同，这个更在于的是边界（指定的颜色为边界），它会替换指定边界内的所有值
 
 ```js
 function BoundarySeedFill(map, x, y, boundaryValue, newValue, maxX, minX, maxY, minY) {
@@ -634,5 +632,5 @@ function BoundarySeedFill(map, x, y, boundaryValue, newValue, maxX, minX, maxY, 
 ```
 
 ## Reference ~
-* [CGA填充算法之种子填充算法](https://www.cnblogs.com/icmzn/p/5065306.html)
-* [MDN Tiles and tilemaps overview](https://developer.mozilla.org/en-US/docs/Games/Techniques/Tilemaps)
+* 参考资料 [CGA填充算法之种子填充算法](https://www.cnblogs.com/icmzn/p/5065306.html)（因为格子数量不多，所以这里就不使用扫描线算法了）
+* 参考资料 [MDN Tiles and tilemaps overview](https://developer.mozilla.org/en-US/docs/Games/Techniques/Tilemaps)（一个瓷砖地图包含的基本元素）
